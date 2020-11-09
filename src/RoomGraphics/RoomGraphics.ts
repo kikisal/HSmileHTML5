@@ -1,5 +1,7 @@
+import * as PIXI from 'pixi.js';
+
 export default class RoomGraphics {
-    static makeRightWall(height: number): HTMLCanvasElement {
+    static makeRightWall(height: number): PIXI.Texture {
         const tempCanvas = document.createElement('canvas');
         const ctx = tempCanvas.getContext("2d");
 
@@ -66,6 +68,6 @@ export default class RoomGraphics {
 
         }
 
-        return tempCanvas;
+        return new PIXI.Texture(new PIXI.BaseTexture(tempCanvas));
     }
 }

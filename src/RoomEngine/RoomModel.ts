@@ -4,22 +4,36 @@ export default class RoomModel {
     size: Point;
     door: Point;
     heightMap: number[][];
+    height: number;
 
     constructor(size: Point, door: Point, heightMap: number[][]) {
         this.size = size;
         this.door = door;
         this.heightMap = heightMap;
+        this.height = 1;
+
+        this.calculateHeight();
+    }
+
+    calculateHeight() {
+        for ( let j = 0; j < this.size.x; ++j ) {
+            for( let i = 0; i < this.size.y; ++i ) {
+                const tileIndex = this.heightMap[j][i];
+                if ( tileIndex > this.height ) 
+                    this.height = tileIndex;
+            }
+        }
     }
 
     static default2x2(): RoomModel {
-        return new RoomModel(new Point(2, 2), new Point(0, 1), [
+        return new RoomModel(new Point(1, 3), new Point(0, 1), [
             [1, 1],
             [1, 1]
         ]);
     }
 
     static default6x6(): RoomModel {
-        return new RoomModel(new Point(6, 6), new Point(0, 1), [
+        return new RoomModel(new Point(6, 6), new Point(3, 2), [
             [1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1],
             [1, 1, 1, 1, 1, 1],
