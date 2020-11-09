@@ -32,29 +32,30 @@ export default class RoomGraphics {
             ctx.strokeStyle = '#70727a';
             ctx.fillStyle = '#70727a';
             ctx.beginPath();
-            ctx.moveTo(points[0].x - 0.5, points[0].y);
-            ctx.lineTo(points[1].x - 0.5, points[1].y);
-            ctx.lineTo(points[2].x - 0.5, points[2].y);
-            ctx.lineTo(points[3].x - 0.5, points[3].y);
-            ctx.lineTo(points[0].x - 0.5, points[0].y);
+            ctx.moveTo(points[0].x - 1, points[0].y);
+            ctx.lineTo(points[1].x - 1, points[1].y);
+            ctx.lineTo(points[2].x - 1, points[2].y);
+            ctx.lineTo(points[3].x - 1, points[3].y);
+            ctx.lineTo(points[0].x - 1, points[0].y);
             ctx.closePath();
             ctx.stroke();
             ctx.fill();
 
 
             if (height > 0) {
-                ctx.strokeStyle = '#90929e';
+               // ctx.strokeStyle = 'red';
                 ctx.fillStyle = '#90929e';
+                
                 ctx.beginPath();
-                ctx.moveTo(points[1].x - 0.5, points[1].y);
-                ctx.lineTo(points[1].x - 0.5, points[1].y + height);
-                ctx.lineTo(points[2].x - 0.5, points[2].y + height);
-                ctx.lineTo(points[2].x - 0.5, points[2].y);
+                ctx.moveTo(points[1].x - 1, points[1].y);
+                ctx.lineTo(points[1].x - 1, points[1].y + height + 1);
+                ctx.lineTo(points[2].x - 1, points[2].y + height + 1);
+                ctx.lineTo(points[2].x - 1, points[2].y);
                 ctx.closePath();
-                ctx.stroke();
+             //   ctx.stroke();
                 ctx.fill();
 
-                ctx.strokeStyle = '#b6b9c8';
+            //    ctx.strokeStyle = '#b6b9c8';
                 ctx.fillStyle = '#b6b9c8';
                 ctx.beginPath();
                 ctx.moveTo(points[3].x, points[3].y);
@@ -62,7 +63,7 @@ export default class RoomGraphics {
                 ctx.lineTo(points[2].x, points[2].y + height);
                 ctx.lineTo(points[2].x, points[2].y);
                 ctx.closePath();
-                ctx.stroke();
+               // ctx.stroke();
                 ctx.fill();
             }
 
