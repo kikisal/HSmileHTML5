@@ -114,13 +114,13 @@ export class Map {
 
         let height = 0;
         // right walls
-        for ( let j = 0; j < model.size.x; ++j ) {
-            for ( let i = 0; i < model.size.y; ++i ) {
-                const tileIndex = model.heightMap[j][i];
+        for ( let i = 0; i < model.size.x; ++i ) {
+            for ( let j = 0; j < model.size.y; ++j ) {
+                const tileIndex = model.heightMap[i][j];
                 
-                if ( (model.door.x !== j || model.door.y !== i) && tileIndex > 0 && i <= sizeY ) {
-                    if ( sizeY > i )
-                        sizeY = i;
+                if ( (model.door.x !== i || model.door.y !== j) && tileIndex > 0 && j <= sizeY ) {
+                    if ( sizeY > j )
+                        sizeY = j;
 
                     if ( tileIndex > 1 ) {
                         height = model.height - 1;
@@ -128,28 +128,65 @@ export class Map {
 
                     this.renderRightWall(this.wallStage, this.discrete(
                         this.toIso(new Vector(
-                            j,
-                            i + 1,
+                            i,
+                            j + 1,
                             height
                     ))), model.height - tileIndex);
                     height = 0;
                 }
             }
         }
+
+        let sizeX = model.size.y;
+        
+        for ( let i = 0; i < model.size.y; ++i ) {
+        // j alias of x
+            for ( let j = 0; j < model.size.x; ++j ) {
+                // i alias of y
+
+                const tileIndex = model.heightMap[j][i];
+                if ( (model.door.x !== j || model.door.y !== i) && tileIndex > 0 && j <= sizeX ) {
+                    if ( sizeX > j )
+                        sizeX = j;
+
+                    // check door.
+                    if ( false ) {
+
+                    } else if ( false ) {
+
+                    } else {
+                        if ( tileIndex > 1 ) {
+                            height = model.height - 1;
+                        } 
+    
+                        this.renderLeftWall(this.wallStage, this.discrete(
+                            this.toIso(new Vector(
+                                j,
+                                i,
+                                height
+                        ))), model.height - tileIndex);
+                        height = 0;
+     
+                    }
+                }
+
+            }
+        }
+
     }
 
     generateFloor(): void {
 
         const { model } = this.room;
-        for ( let i = 0; i < model.size.y; ++i ) {
-            for( let j = 0; j < model.size.x; ++j ) {
-                const tileIndex = model.heightMap[j][i];
+        for ( let i = 0; i < model.size.x; ++i ) {
+            for( let j = 0; j < model.size.y; ++j ) {
+                const tileIndex = model.heightMap[i][j];
                 if ( tileIndex === 0 ) // skip holes.
                     continue;
                 
                 
                 this.renderTile(this.floorStage, this.discrete(
-                    this.toIso(new Vector(j, i, tileIndex - 1))
+                    this.toIso(new Vector(i, j, tileIndex - 1))
                 ));
 
             }
@@ -192,7 +229,6 @@ export class Map {
 
 
     /**
-
      * 
      * @param stage
      * @param position
@@ -207,6 +243,25 @@ export class Map {
         stage.addChild(wallSprite);
 
     }
+
+    /**
+     * 
+     * @param stage 
+     * @param position 
+     * @param wallHeight 
+     */
+    renderLeftWall(stage: PIXI.Container, position: Vector, wallHeight: number) {
+        const wallSprite = new PIXI.Sprite(RoomGraphics.makeLeftWall((122 + (32 * wallHeight))));
+        wallSprite.anchor.set(0, 1);
+        wallSprite.x = position.x - 8;
+        wallSprite.y = position.y + position.z - 12.2;
+
+        // bottom anchor
+        stage.addChild(wallSprite);
+
+    }
+
+    
 
     renderTile(stage: PIXI.Container, position: Vector) {
 
