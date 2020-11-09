@@ -1,0 +1,45 @@
+{
+"frames": {
+	"brick-normal-1.png": {
+		"frame": {"x":65, "y":41, "w":64, "h":40},
+		"spriteSourceSize": {"x":0,"y":0,"w":64,"h":40},
+		"sourceSize": {"w":64,"h":40}
+	},
+	"brick-normal-2.png": {
+		"frame": {"x":65, "y":82, "w":64, "h":40},
+		"spriteSourceSize": {"x":0,"y":0,"w":64,"h":40},
+		"sourceSize": {"w":64,"h":40}
+	},
+	"line.png": {
+		"frame": {"x":0, "y":82, "w":64, "h":40},
+		"spriteSourceSize": {"x":0,"y":0,"w":64,"h":40},
+		"sourceSize": {"w":64,"h":40}
+	},
+	"normal.png": {
+		"frame": {"x":0, "y":41, "w":64, "h":40},
+		"spriteSourceSize": {"x":0,"y":0,"w":64,"h":40},
+		"sourceSize": {"w":64,"h":40}
+	},
+	"tile_points.png": {
+		"frame": {"x":0, "y":0, "w":65, "h":40},
+		"spriteSourceSize": {"x":0,"y":0,"w":65,"h":40},
+		"sourceSize": {"w":65,"h":40}
+	},
+	"tile_square.png": {
+		"frame": {"x":0, "y":123, "w":64, "h":40},
+		"spriteSourceSize": {"x":0,"y":0,"w":64,"h":40},
+		"sourceSize": {"w":64,"h":40}
+	},
+	"zig-zag.png": {
+		"frame": {"x":66, "y":0, "w":64, "h":40},
+		"spriteSourceSize": {"x":0,"y":0,"w":64,"h":40},
+		"sourceSize": {"w":64,"h":40}
+	}
+
+},
+"meta": {
+	"image": "sprites.png",
+	"size": {"w": 131, "h": 164},
+	"scale": "1"
+}
+}
