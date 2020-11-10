@@ -9,6 +9,9 @@ export class Map {
 
     static CELL_WIDTH: number = 32;
     static CELL_HEIGHT: number = 16;
+    
+    static WALL_Z_FACTOR: number = 32;
+    static WALL_HEIGHT_OFFSET: number = 122;
 
     room: Room;
 
@@ -102,49 +105,17 @@ export class Map {
 
     }
 
-    generateWalls(): void {
-        /*
-        this.renderWall(this.wallStage, this.discrete(
-            this.toIso(new Vector(1, 0, 0))
-        ));
-        */
-       
+    generateLeftWalls() {
         const { model } = this.room;
-        let sizeY = model.size.x;
-
-        let height = 0;
-        // right walls
-        for ( let i = 0; i < model.size.x; ++i ) {
-            for ( let j = 0; j < model.size.y; ++j ) {
-                const tileIndex = model.heightMap[i][j];
-                
-                if ( (model.door.x !== i || model.door.y !== j) && tileIndex > 0 && j <= sizeY ) {
-                    if ( sizeY > j )
-                        sizeY = j;
-
-                    if ( tileIndex > 1 ) {
-                        height = model.height - 1;
-                    } 
-
-                    this.renderRightWall(this.wallStage, this.discrete(
-                        this.toIso(new Vector(
-                            i,
-                            j + 1,
-                            height
-                    ))), model.height - tileIndex);
-                    height = 0;
-                }
-            }
-        }
-
         let sizeX = model.size.y;
+        let height = 0;
         
         for ( let i = 0; i < model.size.y; ++i ) {
         // j alias of x
             for ( let j = 0; j < model.size.x; ++j ) {
                 // i alias of y
 
-                const tileIndex = model.heightMap[j][i];
+                const tileIndex = model.heightMap[i][j];
                 if ( (model.door.x !== j || model.door.y !== i) && tileIndex > 0 && j <= sizeX ) {
                     if ( sizeX > j )
                         sizeX = j;
@@ -172,21 +143,86 @@ export class Map {
 
             }
         }
+    }
 
+    generateRightWalls() {
+        const { model } = this.room;
+
+      
+        let wallZ = 0;
+        // right walls
+        for ( let y = 0; y < model.size.y; ++y ) {
+            for ( let x = 0;  x < model.size.x; ++x ) {
+                const tileZ = model.heightMap[y][x];
+
+                if ( model.isDoor(x, y) ) // draw door style elements. Actually ignored.
+                    continue;
+
+                if ( tileZ > 1 )
+                    wallZ = model.height - 1;
+
+                if ( model.validTile(x, y) && !model.validTile(x, y - 1) ) {
+                    this.renderRightWall(this.wallStage, this.discrete(
+                        this.toIso(new Vector(
+                            x,
+                            y - 1,
+                            wallZ
+                    ))), model.height - tileZ, 8, !model.validTile(x + 1, y) || model.isDoor(x + 1, y));
+                }
+
+                wallZ = 0;
+
+                //if ( (model.door.x === j) && model.door.y === i )
+
+        //        console.log();
+             /*
+                if ( (model.door.x !== j || model.door.y !== i) && tileIndex > 0 ) {
+
+
+                    if ( tileIndex > 1 ) {
+                        height = model.height - 1;
+                    } 
+
+                    console.log('yes can render a wall.');
+               
+                    this.renderRightWall(this.wallStage, this.discrete(
+                        this.toIso(new Vector(
+                            i,
+                            j + 1,
+                            height
+                    ))), model.height - tileIndex);
+
+                    height = 0;
+                } else {
+                    
+                    console.log('no I can\'t.');
+                }
+                */
+            }
+        }
+    }
+
+    generateWalls(): void {
+        this.generateRightWalls();
+       // this.generateLeftWalls();
     }
 
     generateFloor(): void {
 
         const { model } = this.room;
-        for ( let i = 0; i < model.size.x; ++i ) {
-            for( let j = 0; j < model.size.y; ++j ) {
-                const tileIndex = model.heightMap[i][j];
+        
+        console.log(model.heightMap);
+
+        for ( let y = 0; y < model.size.y; ++y ) {
+            for( let x = 0; x < model.size.x; ++x ) {
+                const tileIndex = model.heightMap[y][x];
+      
                 if ( tileIndex === 0 ) // skip holes.
                     continue;
                 
                 
                 this.renderTile(this.floorStage, this.discrete(
-                    this.toIso(new Vector(i, j, tileIndex - 1))
+                    this.toIso(new Vector(x, y, tileIndex - 1))
                 ));
 
             }
@@ -233,12 +269,20 @@ export class Map {
      * @param stage
      * @param position
      */
-    renderRightWall(stage: PIXI.Container, position: Vector, wallHeight: number) {
-        const wallSprite = new PIXI.Sprite(RoomGraphics.makeRightWall((122 + (32 * wallHeight))));
-        wallSprite.anchor.set(0, 1);
-        wallSprite.x = position.x + 64;
-        wallSprite.y = position.y + position.z - 28;
+    renderRightWall(stage: PIXI.Container, position: Vector, wallHeight: number, thickess: number, mustDrawRight: boolean) {
+        const wallSprite = RoomGraphics.makeRightWallGraphics((Map.WALL_HEIGHT_OFFSET + (Map.WALL_Z_FACTOR * wallHeight)), thickess, mustDrawRight);
 
+        
+        wallSprite.x = position.x + wallSprite.x;
+        wallSprite.y = (position.y + position.z) + wallSprite.y;
+        
+       /*
+       wallSprite.x = position.x;
+       wallSprite.y = position.y + position.z - 2;
+       */
+       /*
+       wallSprite.x = position.x + 32;
+       wallSprite.y = position.y + position.z - 12;*/
         // bottom anchor
         stage.addChild(wallSprite);
 
@@ -251,7 +295,7 @@ export class Map {
      * @param wallHeight 
      */
     renderLeftWall(stage: PIXI.Container, position: Vector, wallHeight: number) {
-        const wallSprite = new PIXI.Sprite(RoomGraphics.makeLeftWall((122 + (32 * wallHeight))));
+        const wallSprite = new PIXI.Sprite(RoomGraphics.makeLeftWall((Map.WALL_HEIGHT_OFFSET + (Map.WALL_Z_FACTOR * wallHeight))));
         wallSprite.anchor.set(0, 1);
         wallSprite.x = position.x - 8;
         wallSprite.y = position.y + position.z - 12.2;

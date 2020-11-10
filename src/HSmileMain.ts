@@ -8,7 +8,8 @@ export class HSmile {
     // any. Typically we excpect the input to come 
     // from a client call ran into a browser.
 
-    public app: PIXI.Application | undefined;
+    app: PIXI.Application | undefined;
+    
     private static instance: HSmile | undefined;
     private keys: object = {};
     private room: Room | undefined;
@@ -22,7 +23,7 @@ export class HSmile {
 
         
         // preload assets
-
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
         app.loader.baseUrl = 'assets';
         
         app.loader
@@ -117,10 +118,12 @@ export class HSmile {
                     backgroundColor: 0x000000,
                     antialias: true,
                     autoDensity: true,
-                    resolution: 1
+                    resolution: 1,
+                    
                 }
             );    
             
+           
             
             viewOut.appendChild(app.view);
 

@@ -1,6 +1,58 @@
 import * as PIXI from 'pixi.js';
+import { HSmile } from '../HSmileMain';
 
 export default class RoomGraphics {
+
+
+    static makeRightWallGraphics(height: number,  thickness: number = 6, mustDrawRightFace: boolean = true): PIXI.Container {
+        const app = HSmile.get().app!;
+
+        let wallStage = new PIXI.Container();
+
+        let leftWallFace = new PIXI.Graphics();
+
+
+        leftWallFace.beginFill(0xB6B9C8);
+        leftWallFace.drawRect(0, 0, height, 36);
+        leftWallFace.endFill(); 
+        leftWallFace.skew.x = 1.1;
+        leftWallFace.skew.y = 1.57;
+
+        let rightWallFace = new PIXI.Graphics();
+        
+        if ( mustDrawRightFace ) {
+            rightWallFace.beginFill(0x90929E);
+            rightWallFace.drawRect(0, 0, height, thickness);
+            rightWallFace.endFill();
+            rightWallFace.position.y = height + 16;
+            rightWallFace.position.x = 24 + thickness;
+            rightWallFace.skew.x = 0.5;
+            rightWallFace.skew.y = 0;
+            rightWallFace.rotation = -Math.PI / 2;
+        }
+       
+
+        let topWallFace = new PIXI.Graphics();
+
+        topWallFace.beginFill(0x70727A);
+        topWallFace.drawRect(0, 0, thickness, 40);
+        topWallFace.endFill();
+
+        topWallFace.endFill();
+      //  topWallFace.position.y = height + 16;
+      //  topWallFace.position.x = 24 + thickness;
+        topWallFace.skew.x = 0;
+        topWallFace.skew.y = 1.1;
+        topWallFace.rotation =  -0.5;
+     
+        wallStage.addChild(leftWallFace);
+        wallStage.addChild(rightWallFace);
+        wallStage.addChild(topWallFace);
+
+        // set the origin
+        wallStage.position.set(0, -height - 15);
+        return wallStage;
+    }
 
     /**
      * 
@@ -12,6 +64,8 @@ export default class RoomGraphics {
 
         tempCanvas.width = 40;
         tempCanvas.height = 24 + height;
+
+        
 
         if (ctx != null) {
 
@@ -34,6 +88,7 @@ export default class RoomGraphics {
                 }
             ];
 
+           
             ctx.strokeStyle = '#70727a';
             ctx.fillStyle = '#70727a';
             ctx.beginPath();
@@ -74,8 +129,14 @@ export default class RoomGraphics {
 
         }
 
-        return new PIXI.Texture(new PIXI.BaseTexture(tempCanvas));
+        let baseTexture = new PIXI.BaseTexture(tempCanvas);
+        baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+        console.log(tempCanvas.toDataURL('image/png'));
+
+        return new PIXI.Texture(baseTexture);
     }
+
+    
 
    /**
     * 
