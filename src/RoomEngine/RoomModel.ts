@@ -33,6 +33,17 @@ export default class RoomModel {
         }
     }
 
+    starValidTile(x: number, y: number): boolean {
+        for ( let _y = y; _y >= 0; --_y ) {
+            for ( let _x = x; _x >= 0; --_x ) {
+                if ( this.validTile(_x, _y) )
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
     static default2x2(): RoomModel {
         return new RoomModel(new Point(1, 3), new Point(0, 1), [
             [1, 1],
@@ -45,11 +56,37 @@ export default class RoomModel {
             [0, 0, 0, 0, 0, 0, 1, 1, 1],
             [0, 0, 0, 0, 0, 0, 1, 1, 1],
             [2, 2, 2, 2, 1, 1, 1, 1, 1],
-            [2, 2, 2, 2, 1, 1, 1, 1, 1],
+            [2, 2, 0, 2, 1, 1, 1, 1, 1],
             [2, 2, 2, 2, 1, 1, 1, 1, 1],
             [2, 2, 2, 2, 1, 1, 1, 1, 1],
 
         ]);
+    }
+
+    static default6x6_circ(): RoomModel {
+        return new RoomModel(new Point(6, 6), new Point(4, 0), [
+            [1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1],
+            [1, 1, 0, 0, 1, 1],
+            [1, 1, 0, 0, 1, 1],
+            [1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1],
+
+        ]);      
+    }
+
+    static default13x8(): RoomModel {
+        return new RoomModel(new Point(13, 8), new Point(0, 4), [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
+        ]);      
     }
 
     isDoor(x: number, y: number): boolean {
@@ -63,5 +100,9 @@ export default class RoomModel {
             y >= 0 && y < this.size.y &&
             this.heightMap[y][x] !== 0
         );
+    }
+
+    inBounds(x: number, y: number): boolean {
+        return x > 0 && x < this.size.x && y > 0 && y < this.size.y; 
     }
 }

@@ -20,7 +20,7 @@ export class Map {
     wallStage : PIXI.Container;
     furniStage: PIXI.Container;
 
-
+    
     
   
         
@@ -107,40 +107,30 @@ export class Map {
 
     generateLeftWalls() {
         const { model } = this.room;
-        let sizeX = model.size.y;
-        let height = 0;
-        
-        for ( let i = 0; i < model.size.y; ++i ) {
-        // j alias of x
-            for ( let j = 0; j < model.size.x; ++j ) {
-                // i alias of y
 
-                const tileIndex = model.heightMap[i][j];
-                if ( (model.door.x !== j || model.door.y !== i) && tileIndex > 0 && j <= sizeX ) {
-                    if ( sizeX > j )
-                        sizeX = j;
+      
+        let wallZ = 0;
+        // right walls
+        for ( let y = 0; y < model.size.y; ++y ) {
+            for ( let x = 0;  x < model.size.x; ++x ) {
+                const tileZ = model.heightMap[y][x];
 
-                    // check door.
-                    if ( false ) {
+                if ( model.isDoor(x, y) ) // draw door style elements. Actually ignored.
+                    continue;
 
-                    } else if ( false ) {
+                if ( tileZ > 1 )
+                    wallZ = model.height - 1;
 
-                    } else {
-                        if ( tileIndex > 1 ) {
-                            height = model.height - 1;
-                        } 
-    
-                        this.renderLeftWall(this.wallStage, this.discrete(
-                            this.toIso(new Vector(
-                                j,
-                                i,
-                                height
-                        ))), model.height - tileIndex);
-                        height = 0;
-     
-                    }
+                if ( model.validTile(x, y) && !model.starValidTile(x - 1, y)) {
+                    this.renderLeftWall(this.wallStage, this.discrete(
+                        this.toIso(new Vector(
+                            x,
+                            y,
+                            wallZ
+                    ))), model.height - tileZ, 8, !model.validTile(x, y + 1) || model.isDoor(x, y + 1));
                 }
 
+                wallZ = 0;
             }
         }
     }
@@ -161,7 +151,7 @@ export class Map {
                 if ( tileZ > 1 )
                     wallZ = model.height - 1;
 
-                if ( model.validTile(x, y) && !model.validTile(x, y - 1) ) {
+                if ( model.validTile(x, y) && !model.starValidTile(x, y - 1) ) {
                     this.renderRightWall(this.wallStage, this.discrete(
                         this.toIso(new Vector(
                             x,
@@ -171,40 +161,13 @@ export class Map {
                 }
 
                 wallZ = 0;
-
-                //if ( (model.door.x === j) && model.door.y === i )
-
-        //        console.log();
-             /*
-                if ( (model.door.x !== j || model.door.y !== i) && tileIndex > 0 ) {
-
-
-                    if ( tileIndex > 1 ) {
-                        height = model.height - 1;
-                    } 
-
-                    console.log('yes can render a wall.');
-               
-                    this.renderRightWall(this.wallStage, this.discrete(
-                        this.toIso(new Vector(
-                            i,
-                            j + 1,
-                            height
-                    ))), model.height - tileIndex);
-
-                    height = 0;
-                } else {
-                    
-                    console.log('no I can\'t.');
-                }
-                */
             }
         }
     }
 
     generateWalls(): void {
         this.generateRightWalls();
-       // this.generateLeftWalls();
+        this.generateLeftWalls();
     }
 
     generateFloor(): void {
@@ -270,19 +233,14 @@ export class Map {
      * @param position
      */
     renderRightWall(stage: PIXI.Container, position: Vector, wallHeight: number, thickess: number, mustDrawRight: boolean) {
-        const wallSprite = RoomGraphics.makeRightWallGraphics((Map.WALL_HEIGHT_OFFSET + (Map.WALL_Z_FACTOR * wallHeight)), thickess, mustDrawRight);
+        const wallSprite = 
+            new PIXI.Sprite(RoomGraphics.makeRightWall((Map.WALL_HEIGHT_OFFSET + (Map.WALL_Z_FACTOR * wallHeight)), thickess, mustDrawRight));
 
+        wallSprite.anchor.set(0, 1);
+        wallSprite.x = position.x;
+        wallSprite.y = position.y + position.z + 4;
         
-        wallSprite.x = position.x + wallSprite.x;
-        wallSprite.y = (position.y + position.z) + wallSprite.y;
-        
-       /*
-       wallSprite.x = position.x;
-       wallSprite.y = position.y + position.z - 2;
-       */
-       /*
-       wallSprite.x = position.x + 32;
-       wallSprite.y = position.y + position.z - 12;*/
+
         // bottom anchor
         stage.addChild(wallSprite);
 
@@ -294,8 +252,10 @@ export class Map {
      * @param position 
      * @param wallHeight 
      */
-    renderLeftWall(stage: PIXI.Container, position: Vector, wallHeight: number) {
-        const wallSprite = new PIXI.Sprite(RoomGraphics.makeLeftWall((Map.WALL_HEIGHT_OFFSET + (Map.WALL_Z_FACTOR * wallHeight))));
+    renderLeftWall(stage: PIXI.Container, position: Vector, wallHeight: number, thickess: number, mustDrawRight: boolean) {
+        const wallSprite = 
+        new PIXI.Sprite(RoomGraphics.makeLeftWall((Map.WALL_HEIGHT_OFFSET + (Map.WALL_Z_FACTOR * wallHeight)), thickess, mustDrawRight));
+
         wallSprite.anchor.set(0, 1);
         wallSprite.x = position.x - 8;
         wallSprite.y = position.y + position.z - 12.2;

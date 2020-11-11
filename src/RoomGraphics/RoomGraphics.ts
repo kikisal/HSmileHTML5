@@ -35,15 +35,17 @@ export default class RoomGraphics {
         let topWallFace = new PIXI.Graphics();
 
         topWallFace.beginFill(0x70727A);
-        topWallFace.drawRect(0, 0, thickness, 40);
+        topWallFace.drawRect(0, 0, thickness, 36);
         topWallFace.endFill();
 
         topWallFace.endFill();
-      //  topWallFace.position.y = height + 16;
-      //  topWallFace.position.x = 24 + thickness;
-        topWallFace.skew.x = 0;
-        topWallFace.skew.y = 1.1;
-        topWallFace.rotation =  -0.5;
+       //  topWallFace.position.y = height + 16;
+       //  topWallFace.position.x = 24 + thickness;
+        topWallFace.skew.x = 0.0;
+        topWallFace.skew.y = 0.5;
+        topWallFace.rotation =  -Math.PI/2.9;
+        
+        // x, y + size * 0.5, 1, 1, 0, 1.1, -0.5, 0, 0
      
         wallStage.addChild(leftWallFace);
         wallStage.addChild(rightWallFace);
@@ -58,7 +60,7 @@ export default class RoomGraphics {
      * 
      * @deprecated
      */
-    static makeRightWall(height: number): PIXI.Texture {
+    static makeRightWall(height: number, thickness: number, mustDrawRightFace: boolean): PIXI.Texture {
         const tempCanvas = document.createElement('canvas');
         const ctx = tempCanvas.getContext("2d");
 
@@ -103,17 +105,20 @@ export default class RoomGraphics {
 
 
             if (height > 0) {
-               // ctx.strokeStyle = 'red';
-                ctx.fillStyle = '#90929e';
-                
-                ctx.beginPath();
-                ctx.moveTo(points[1].x - 1, points[1].y);
-                ctx.lineTo(points[1].x - 1, points[1].y + height + 1);
-                ctx.lineTo(points[2].x - 1, points[2].y + height + 1);
-                ctx.lineTo(points[2].x - 1, points[2].y);
-                ctx.closePath();
-             //   ctx.stroke();
-                ctx.fill();
+                if ( mustDrawRightFace ) {
+                    // ctx.strokeStyle = 'red';
+                    ctx.fillStyle = '#90929e';
+                                
+                    ctx.beginPath();
+                    ctx.moveTo(points[1].x - 1, points[1].y);
+                    ctx.lineTo(points[1].x - 1, points[1].y + height + 1);
+                    ctx.lineTo(points[2].x - 1, points[2].y + height + 1);
+                    ctx.lineTo(points[2].x - 1, points[2].y);
+                    ctx.closePath();
+                    //   ctx.stroke();
+                    ctx.fill();
+                }
+            
 
             //    ctx.strokeStyle = '#b6b9c8';
                 ctx.fillStyle = '#b6b9c8';
@@ -131,8 +136,7 @@ export default class RoomGraphics {
 
         let baseTexture = new PIXI.BaseTexture(tempCanvas);
         baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
-        console.log(tempCanvas.toDataURL('image/png'));
-
+      
         return new PIXI.Texture(baseTexture);
     }
 
@@ -143,7 +147,7 @@ export default class RoomGraphics {
      * 
      * @deprecated
      */
-    static makeLeftWall(height: number): PIXI.Texture {
+    static makeLeftWall(height: number, thickness: number, mustDrawRightFace: boolean): PIXI.Texture {
         const tempCanvas = document.createElement('canvas');
         const ctx = tempCanvas.getContext("2d");
 
@@ -186,15 +190,18 @@ export default class RoomGraphics {
 
             if (height > 0) {
             //    ctx.strokeStyle = '#bbbecd';
-                ctx.fillStyle = '#bbbecd';
-                ctx.beginPath();
-                ctx.moveTo(points[1].x - .3, points[1].y);
-                ctx.lineTo(points[1].x - .3, points[1].y + height);
-                ctx.lineTo(points[2].x - .3, points[2].y + height);
-                ctx.lineTo(points[2].x - .3, points[2].y);
-                ctx.closePath();
-               // ctx.stroke();
-                ctx.fill();
+                if ( mustDrawRightFace ) {
+                    ctx.fillStyle = '#bbbecd';
+                    ctx.beginPath();
+                    ctx.moveTo(points[1].x - .3, points[1].y);
+                    ctx.lineTo(points[1].x - .3, points[1].y + height);
+                    ctx.lineTo(points[2].x - .3, points[2].y + height);
+                    ctx.lineTo(points[2].x - .3, points[2].y);
+                    ctx.closePath();
+                   // ctx.stroke();
+                    ctx.fill();
+                }
+               
 
 
                 ctx.strokeStyle = '#90929e';

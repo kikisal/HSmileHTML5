@@ -14,6 +14,20 @@ export class HSmile {
     private keys: object = {};
     private room: Room | undefined;
 
+    constructor() {
+        window.addEventListener('resize', this.resize.bind(this));
+    }
+
+    resize() {
+        /*
+        this.camera.width = this.renderer.screen.width;
+        this.camera.height = this.renderer.screen.height;
+        */
+       const app = this.app!;
+
+        app.renderer.resize(window.innerWidth, window.innerHeight);
+    }
+
     init(): void {
 
         const app = this.app;
@@ -61,7 +75,7 @@ export class HSmile {
           */
          
 
-        this.room = new Room(app.stage, RoomModel.default6x6());
+        this.room = new Room(app.stage, RoomModel.default13x8());
 
         app.ticker.add(this.gameLoop.bind(this));
     }   
@@ -116,16 +130,17 @@ export class HSmile {
                     width: window.innerWidth,
                     height: window.innerHeight,
                     backgroundColor: 0x000000,
-                    antialias: true,
+                    antialias: false,
                     autoDensity: true,
                     resolution: 1,
                     
                 }
             );    
-            
-           
+
+  
             
             viewOut.appendChild(app.view);
+            
 
             const hsmile = HSmile.get();
 
@@ -139,6 +154,8 @@ export class HSmile {
         
 
     }
+
+                
 }
 
 (<any>window).HSmile = (<any>window).HSmile || HSmile;
