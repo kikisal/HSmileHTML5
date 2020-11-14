@@ -75,7 +75,7 @@ export class HSmile {
           */
          
 
-        this.room = new Room(app.stage, RoomModel.default13x8());
+        this.room = new Room(app.stage, RoomModel.default6x6());
 
         app.ticker.add(this.gameLoop.bind(this));
     }   

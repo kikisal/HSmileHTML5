@@ -4,68 +4,137 @@ import { HSmile } from '../HSmileMain';
 export default class RoomGraphics {
 
 
-    static makeRightWallGraphics(height: number,  thickness: number = 6, mustDrawRightFace: boolean = true): PIXI.Container {
-        const app = HSmile.get().app!;
+    static flipImage(img: HTMLCanvasElement | HTMLImageElement): HTMLCanvasElement | null {
+        let element = document.createElement('canvas');
+        let c = element.getContext("2d");
+        if (c == null)
+            return null;
 
-        let wallStage = new PIXI.Container();
+        let width = img.width;
+        let height = img.height;
+        element.width = width;
+        element.height = height;
 
-        let leftWallFace = new PIXI.Graphics();
+        c.save();
+        c.scale(-1, 1);
+        c.drawImage(img, 0, 0, width * -1, height);
+        c.restore();
 
+        return element;
+    }
 
-        leftWallFace.beginFill(0xB6B9C8);
-        leftWallFace.drawRect(0, 0, height, 36);
-        leftWallFace.endFill(); 
-        leftWallFace.skew.x = 1.1;
-        leftWallFace.skew.y = 1.57;
+    static makeStair(strokeColor: string, floorColor: string, leftColorStroke: string, leftColor: string, rightColorStroke: string, rightColor: string, rightSide: boolean, skip: number = 0): HTMLCanvasElement {
+        const tempCanvas = document.createElement('canvas');
+        const ctx = tempCanvas.getContext("2d");
 
-        let rightWallFace = new PIXI.Graphics();
+        tempCanvas.width = 99;
+        tempCanvas.height = 88;
+
+        if (ctx != null) {
+
         
-        if ( mustDrawRightFace ) {
-            rightWallFace.beginFill(0x90929E);
-            rightWallFace.drawRect(0, 0, height, thickness);
-            rightWallFace.endFill();
-            rightWallFace.position.y = height + 16;
-            rightWallFace.position.x = 24 + thickness;
-            rightWallFace.skew.x = 0.5;
-            rightWallFace.skew.y = 0;
-            rightWallFace.rotation = -Math.PI / 2;
+
+            const stairPoints = [
+                {
+                    x: 32,
+                    y: 0
+                },
+                {
+                    x: 0,
+                    y: 16
+                },
+                {
+                    x: 8 + 2,
+                    y: 20 + 1
+                },
+                {
+                    x: 40 + 2,
+                    y: 4 + 1
+                }
+            ];
+
+            const thickness = 7;
+
+            for (let i = 3 - skip; i >= 0; i--) {
+                let offsetX = (10 * i) + 26;
+                let offsetY = (13 * i) + 19;
+                let fixedThickness = thickness;
+                if (rightSide) {
+                    if (i === 1) {
+                        fixedThickness += 2;
+                    }
+                    if (i === 3 || i === 2) {
+                        offsetY += 1;
+                    }
+                }
+                ctx.strokeStyle = strokeColor;
+                ctx.fillStyle = floorColor;
+                ctx.beginPath();
+                ctx.moveTo(stairPoints[0].x + offsetX, stairPoints[0].y + offsetY);
+                ctx.lineTo(stairPoints[1].x + offsetX, stairPoints[1].y + offsetY);
+                ctx.lineTo(stairPoints[2].x + offsetX, stairPoints[2].y + offsetY);
+                ctx.lineTo(stairPoints[3].x + offsetX, stairPoints[3].y + offsetY);
+                ctx.lineTo(stairPoints[0].x + offsetX, stairPoints[0].y + offsetY);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.fill();
+
+                //thickness l
+                ctx.strokeStyle = leftColorStroke;
+                ctx.fillStyle = leftColor;
+                ctx.beginPath();
+                ctx.moveTo(stairPoints[1].x - 0.5 + offsetX, stairPoints[1].y + offsetY);
+                ctx.lineTo(stairPoints[1].x - 0.5 + offsetX, stairPoints[1].y + fixedThickness + offsetY);
+                ctx.lineTo(stairPoints[2].x - 0.5 + offsetX, stairPoints[2].y + fixedThickness + offsetY);
+                ctx.lineTo(stairPoints[2].x - 0.5 + offsetX, stairPoints[2].y + offsetY);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.fill();
+
+                //thickness r
+                ctx.strokeStyle = rightColorStroke;
+                ctx.fillStyle = rightColor;
+                ctx.beginPath();
+                ctx.moveTo(stairPoints[3].x + 0.5 + offsetX, stairPoints[3].y + offsetY);
+                ctx.lineTo(stairPoints[3].x + 0.5 + offsetX, stairPoints[3].y + fixedThickness + offsetY);
+                ctx.lineTo(stairPoints[2].x + 0.5 + offsetX, stairPoints[2].y + fixedThickness + offsetY);
+                ctx.lineTo(stairPoints[2].x + 0.5 + offsetX, stairPoints[2].y + offsetY);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.fill();
+            }
+
         }
-       
 
-        let topWallFace = new PIXI.Graphics();
+        return tempCanvas;
+    }
 
-        topWallFace.beginFill(0x70727A);
-        topWallFace.drawRect(0, 0, thickness, 36);
-        topWallFace.endFill();
+    static makeLeftStair() {
+        let baseTexture = new PIXI.BaseTexture(this.makeStair('rgba(142,142,94,127)', '#989865', '#676744', '#6F6F49', '#7A7A51', '#838357', false)!);
+        baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+      
+        return new PIXI.Texture(baseTexture);
+    }
 
-        topWallFace.endFill();
-       //  topWallFace.position.y = height + 16;
-       //  topWallFace.position.x = 24 + thickness;
-        topWallFace.skew.x = 0.0;
-        topWallFace.skew.y = 0.5;
-        topWallFace.rotation =  -Math.PI/2.9;
+    static makeRightStair(toSkip: number = 0) {
         
-        // x, y + size * 0.5, 1, 1, 0, 1.1, -0.5, 0, 0
-     
-        wallStage.addChild(leftWallFace);
-        wallStage.addChild(rightWallFace);
-        wallStage.addChild(topWallFace);
-
-        // set the origin
-        wallStage.position.set(0, -height - 15);
-        return wallStage;
+        let baseTexture = new PIXI.BaseTexture(this.flipImage(this.makeStair('rgba(142,142,94,127)', '#989865', '#676744', '#6F6F49', '#7A7A51', '#838357', true, toSkip))!);
+        baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+      
+        return new PIXI.Texture(baseTexture);
     }
 
     /**
      * 
-     * @deprecated
+     *
      */
     static makeRightWall(height: number, thickness: number, mustDrawRightFace: boolean): PIXI.Texture {
         const tempCanvas = document.createElement('canvas');
+        tempCanvas.style.imageRendering = 'pixelated';
         const ctx = tempCanvas.getContext("2d");
 
         tempCanvas.width = 40;
-        tempCanvas.height = 24 + height;
+        tempCanvas.height = 26 + height;
 
         
 
@@ -90,7 +159,8 @@ export default class RoomGraphics {
                 }
             ];
 
-           
+            ctx.save();
+            ctx.translate(0, 1);
             ctx.strokeStyle = '#70727a';
             ctx.fillStyle = '#70727a';
             ctx.beginPath();
@@ -131,7 +201,7 @@ export default class RoomGraphics {
                // ctx.stroke();
                 ctx.fill();
             }
-
+            ctx.restore();
         }
 
         let baseTexture = new PIXI.BaseTexture(tempCanvas);
@@ -152,7 +222,7 @@ export default class RoomGraphics {
         const ctx = tempCanvas.getContext("2d");
 
         tempCanvas.width = 40;
-        tempCanvas.height = 24 + height;
+        tempCanvas.height = 26 + height;
 
         if (ctx != null) {
 
@@ -175,6 +245,8 @@ export default class RoomGraphics {
                 }
             ];
 
+            ctx.save();
+            ctx.translate(0, 1);
             ctx.strokeStyle = '#70727a';
             ctx.fillStyle = '#70727a';
             ctx.beginPath();
@@ -186,6 +258,9 @@ export default class RoomGraphics {
             ctx.closePath();
             ctx.stroke();
             ctx.fill();
+            
+       
+
 
 
             if (height > 0) {
@@ -215,7 +290,10 @@ export default class RoomGraphics {
                 ctx.stroke();
                 ctx.fill();
             }
+            ctx.restore();
         }
+
+        console.log(tempCanvas.toDataURL('image/png'));
 
         return new PIXI.Texture(new PIXI.BaseTexture(tempCanvas));
     }

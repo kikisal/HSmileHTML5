@@ -3,6 +3,7 @@ import { HSmile } from '../HSmileMain';
 import Vector from '../Math/Vector';
 import RoomGraphics from '../RoomGraphics/RoomGraphics';
 import { Room } from './Room';
+import INDEX_ORDERS from './IndexOrders';
 
 export class Map {
 
@@ -16,31 +17,26 @@ export class Map {
     room: Room;
 
     // game layers
-    floorStage: PIXI.Container;
-    wallStage : PIXI.Container;
-    furniStage: PIXI.Container;
+    // new
+    mapStage: PIXI.Container;
+    wallSprites: object[];
 
-    
+    stairsZIndeces: number = INDEX_ORDERS.STAIR_INDEX_OFFSET;
     
   
         
     constructor(room: Room) {
         this.room = room;
+        this.wallSprites = [];
 
         const app = HSmile.get().app!;
-        this.floorStage = new PIXI.Container();
-        this.wallStage  = new PIXI.Container();
-        this.furniStage = new PIXI.Container();
 
-        this.floorStage.x = app.view.width  / 2;
-        this.floorStage.y = app.view.height / 2;
-        
-        this.wallStage.x = this.floorStage.x;
-        this.wallStage.y = this.floorStage.y;
+        this.room.root_stage.position.x = window.innerWidth / 2;
+        this.room.root_stage.position.y = window.innerHeight / 2;
 
-        this.wallStage.zIndex = 2;
-        
-        this.floorStage.zIndex = 1;
+        this.mapStage = new PIXI.Container();
+        this.mapStage.sortableChildren = true;
+
         
         this.addStages();
         // generate map
@@ -50,10 +46,7 @@ export class Map {
 
     addStages() {        
         const { root_stage } = this.room;
-
-        root_stage.addChild(this.wallStage);
-        root_stage.addChild(this.floorStage);
-        root_stage.addChild(this.furniStage);
+        root_stage.addChild(this.mapStage);
     }
 
     /**
@@ -72,37 +65,24 @@ export class Map {
         const app = HSmile.get().app!;
         
         // clear floor stage. Removes old tiles.
-        this.clearFloor();
-        this.clearWalls();
+      //  this.clearFloor();
+      //  this.clearWalls();
+
+        this.clearAll();
 
 
+        
         this.generateFloor();
-        this.generateWalls();
+       // this.generateWalls();
+      //  this.generateDoor();
+ 
+     //  this.generateStairRight();
 
+    }
 
-
-        /*
-
-        for ( let i = 0; i < tilesY; ++i ) {
-            for ( let j = 0; j < tilesX; ++j ) {
-
-                let coords = this.toIso(new PIXI.Point(i, j));
-            
-                coords.set(
-                    (coords.x * this.cellWidth) + offsetX, 
-                    ((coords.y * this.cellHeight) + offsetY) 
-                );
-               
-          
-
-                this.renderIsometricTile(
-                    this.floorStage, 
-                    coords
-                );
-            }
-        }
-        */
-
+    generateStairRight(): void {
+        const stairs = new PIXI.Sprite(RoomGraphics.makeRightStair());
+        this.mapStage.addChild(stairs);
     }
 
     generateLeftWalls() {
@@ -110,7 +90,7 @@ export class Map {
 
       
         let wallZ = 0;
-        // right walls
+        // left walls
         for ( let y = 0; y < model.size.y; ++y ) {
             for ( let x = 0;  x < model.size.x; ++x ) {
                 const tileZ = model.heightMap[y][x];
@@ -122,12 +102,11 @@ export class Map {
                     wallZ = model.height - 1;
 
                 if ( model.validTile(x, y) && !model.starValidTile(x - 1, y)) {
-                    this.renderLeftWall(this.wallStage, this.discrete(
-                        this.toIso(new Vector(
-                            x,
-                            y,
-                            wallZ
-                    ))), model.height - tileZ, 8, !model.validTile(x, y + 1) || model.isDoor(x, y + 1));
+                    this.renderLeftWall(this.mapStage, new Vector(
+                        x,
+                        y,
+                        wallZ
+                    ), model.height - tileZ, 8, !model.validTile(x, y + 1) || model.isDoor(x, y + 1));
                 }
 
                 wallZ = 0;
@@ -152,12 +131,12 @@ export class Map {
                     wallZ = model.height - 1;
 
                 if ( model.validTile(x, y) && !model.starValidTile(x, y - 1) ) {
-                    this.renderRightWall(this.wallStage, this.discrete(
-                        this.toIso(new Vector(
-                            x,
-                            y - 1,
-                            wallZ
-                    ))), model.height - tileZ, 8, !model.validTile(x + 1, y) || model.isDoor(x + 1, y));
+
+                    this.renderRightWall(this.mapStage, new Vector(
+                        x, 
+                        y - 1, 
+                        wallZ
+                    ), model.height - tileZ, 8, !model.validTile(x + 1, y) || model.isDoor(x + 1, y))
                 }
 
                 wallZ = 0;
@@ -170,27 +149,47 @@ export class Map {
         this.generateLeftWalls();
     }
 
+
+
+    generateDoor(): void {
+        
+    }
+
     generateFloor(): void {
 
         const { model } = this.room;
-        
-        console.log(model.heightMap);
+
+        let toSkip = 0;
+
 
         for ( let y = 0; y < model.size.y; ++y ) {
             for( let x = 0; x < model.size.x; ++x ) {
                 const tileIndex = model.heightMap[y][x];
+             
+
       
                 if ( tileIndex === 0 ) // skip holes.
                     continue;
-                
-                
-                this.renderTile(this.floorStage, this.discrete(
-                    this.toIso(new Vector(x, y, tileIndex - 1))
-                ));
 
+                    
+               
+
+                if ( model.validTile(x, y - 1) && Math.abs(tileIndex - model.heightMap[y - 1][x]) === 1 ) {
+                  
+                    this.renderRightStair(this.mapStage, new Vector(
+                        x,
+                        y,
+                        tileIndex - 1
+                    ), tileIndex, toSkip);
+                } else {
+                    this.renderTile(this.mapStage, new Vector(
+                        x, 
+                        y,
+                        tileIndex - 1
+                    ));
+                }
             }
         }
-
     }
 
     discrete(position: Vector): Vector {
@@ -200,18 +199,24 @@ export class Map {
             position.z * Map.CELL_HEIGHT * 2
         );
     }
-
+/*
     clearWalls(): void {
         for( let i = this.wallStage.children.length - 1; i >= 0; --i )
             this.wallStage.removeChild(this.wallStage.children[i]);
     }
-
+*/
     /**
      * @description remove all old tiles from "floorStage"
      */
+    /*
     clearFloor(): void {
         for( let i = this.floorStage.children.length - 1; i >= 0; --i )
             this.floorStage.removeChild(this.floorStage.children[i]);
+    }*/
+
+    clearAll(): void {
+        for( let i = this.mapStage.children.length - 1; i >= 0; --i )
+            this.mapStage.removeChild(this.mapStage.children[i]);    
     }
 
     /**
@@ -236,10 +241,26 @@ export class Map {
         const wallSprite = 
             new PIXI.Sprite(RoomGraphics.makeRightWall((Map.WALL_HEIGHT_OFFSET + (Map.WALL_Z_FACTOR * wallHeight)), thickess, mustDrawRight));
 
+        const stagePosition = this.discrete(
+            this.toIso(new Vector(
+                position.x,
+                position.y,
+                position.z
+        )));
+
         wallSprite.anchor.set(0, 1);
-        wallSprite.x = position.x;
-        wallSprite.y = position.y + position.z + 4;
+        wallSprite.x = stagePosition.x;
+        wallSprite.y = stagePosition.y + stagePosition.z + 5;
+        wallSprite.zIndex = INDEX_ORDERS.WALL_ORDER;
         
+       
+        this.wallSprites.push({
+            x: position.x,
+            y: position.y,
+            sprite: wallSprite
+        });
+
+
 
         // bottom anchor
         stage.addChild(wallSprite);
@@ -256,16 +277,74 @@ export class Map {
         const wallSprite = 
         new PIXI.Sprite(RoomGraphics.makeLeftWall((Map.WALL_HEIGHT_OFFSET + (Map.WALL_Z_FACTOR * wallHeight)), thickess, mustDrawRight));
 
+        
+        const stagePosition = this.discrete(
+            this.toIso(new Vector(
+                position.x,
+                position.y,
+                position.z
+        )));
+
         wallSprite.anchor.set(0, 1);
-        wallSprite.x = position.x - 8;
-        wallSprite.y = position.y + position.z - 12.2;
+        wallSprite.x = stagePosition.x - 8;
+        wallSprite.y = stagePosition.y + stagePosition.z - 11;
+        wallSprite.zIndex = INDEX_ORDERS.WALL_ORDER;
+
+        this.wallSprites.push({
+            x: position.x,
+            y: position.y,
+            sprite: wallSprite
+        });
 
         // bottom anchor
         stage.addChild(wallSprite);
 
+
     }
 
-    
+    renderRightStair(stage: PIXI.Container, position: Vector, tileHeight: number, toSkip: number = 0) {
+        // size: number, 
+       //  height: number = 9, topColor: number = 0x989865, leftColor: number = 0x767643, rightColor: number = 0x545421
+       const app = HSmile.get().app!;
+
+       const tileSprite = new PIXI.Sprite(RoomGraphics.makeRightStair(toSkip));
+       tileSprite.anchor.set(0, 1);
+       
+       const stagePosition = this.discrete(
+           this.toIso(new Vector(position.x, position.y, position.z))
+       );
+
+       tileSprite.x = stagePosition.x - 8;
+       tileSprite.y = stagePosition.y + stagePosition.z - 3;
+       tileSprite.zIndex = this.stairsZIndeces + tileHeight;
+       // tileSprite.tint = 0x989865;
+
+
+       stage.addChild(tileSprite);
+    }
+
+    renderLeftStair(stage: PIXI.Container, position: Vector) {
+        
+        // size: number, 
+       //  height: number = 9, topColor: number = 0x989865, leftColor: number = 0x767643, rightColor: number = 0x545421
+       const app = HSmile.get().app!;
+
+       const tileSprite = new PIXI.Sprite(RoomGraphics.makeLeftStair());
+       tileSprite.anchor.set(0, 1);
+       
+       const stagePosition = this.discrete(
+           this.toIso(new Vector(position.x, position.y, position.z))
+       );
+
+       tileSprite.x = stagePosition.x;
+       tileSprite.y = stagePosition.y + stagePosition.z;
+
+       // tileSprite.tint = 0x989865;
+       tileSprite.zIndex = INDEX_ORDERS.FLOOR_ORDER;
+
+
+       stage.addChild(tileSprite);
+    }
 
     renderTile(stage: PIXI.Container, position: Vector) {
 
@@ -278,11 +357,16 @@ export class Map {
             const tileSprite = new PIXI.Sprite(sheet?.textures["normal.png"]);
             tileSprite.anchor.set(0, 1);
             
-            tileSprite.x = position.x;
-            tileSprite.y = position.y + position.z;
+            const stagePosition = this.discrete(
+                this.toIso(new Vector(position.x, position.y, position.z))
+            );
+
+            tileSprite.x = stagePosition.x;
+            tileSprite.y = stagePosition.y + stagePosition.z;
 
             tileSprite.tint = 0x989865;
-            
+            tileSprite.zIndex = INDEX_ORDERS.FLOOR_ORDER;
+
 
             stage.addChild(tileSprite);
       }

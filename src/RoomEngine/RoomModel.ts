@@ -4,12 +4,14 @@ export default class RoomModel {
     size: Point;
     door: Point;
     heightMap: number[][];
+    wallMap: number[][];
     height: number;
 
     constructor(size: Point, door: Point, heightMap: number[][]) {
         this.size = size;
         this.door = door;
         this.heightMap = heightMap;
+        this.wallMap = [];
         this.height = 1;
         this.transposeHeightMap();
     
@@ -55,10 +57,10 @@ export default class RoomModel {
         return new RoomModel(new Point(9, 6), new Point(4, 0), [
             [0, 0, 0, 0, 0, 0, 1, 1, 1],
             [0, 0, 0, 0, 0, 0, 1, 1, 1],
-            [2, 2, 2, 2, 1, 1, 1, 1, 1],
-            [2, 2, 0, 2, 1, 1, 1, 1, 1],
-            [2, 2, 2, 2, 1, 1, 1, 1, 1],
-            [2, 2, 2, 2, 1, 1, 1, 1, 1],
+            [3, 3, 3, 3, 1, 1, 1, 1, 1],
+            [3, 3, 3, 3, 1, 1, 1, 1, 1],
+            [3, 3, 3, 2, 1, 1, 1, 1, 1],
+            [3, 3, 3, 2, 1, 1, 1, 1, 1],
 
         ]);
     }
