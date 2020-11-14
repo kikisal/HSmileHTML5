@@ -7,6 +7,9 @@ import IAvatarPart from "./IAvatarPart";
 
 
 
+type HSmileSprite = {
+    [key: string]: number;
+};
 
 export default class AvatarPart implements IAvatarPart {
     
@@ -17,22 +20,74 @@ export default class AvatarPart implements IAvatarPart {
     stylePart: number = 1;
     styleRotation: AvatarRotations = 0; // rotations 0, 1, 2, 3, 7
     rotation: number = 0; //
-    animationFrame: number = 0; // animation frame
+
+    currentAnimationFrame: number = 0; // num frames
+
+    
     flip: boolean = false;
 
-    spritePart: PIXI.Sprite;
+    tint?: number;
 
     offset?: Vector;
 
-    animatedSprites?: PIXI.AnimatedSprite;
+    sprite?: PIXI.Sprite;
+    
+    spriteFrames: HSmileSprite = {};
 
-    constructor(stage: PIXI.Container) {
+    constructor(stage: PIXI.Container, tint?: number) {
         this.stage = stage;
         this.offset = new Vector();
-        this.spritePart = new PIXI.Sprite();
+        this.tint = tint;
         this.createSprite();
+    }
+    prepareSprites(): void {
+        throw new Error('Method not implemented.');
+    }
+    
+    setSprites(state: AnimationStates, numFrames: number): void {
+        const app = HSmile.get().app!;
+        const old_state  = this.animationState;
+
+        this.animationState = state;
+        this.spriteFrames[state] = numFrames;
+        this.animationState = old_state;
+    }
+
+    createSprite(): void {
+        const app = HSmile.get().app!;
+
+        this.prepareSprites();
+ 
+
+        this.sprite = new PIXI.Sprite(app.loader.resources[HS_HUMAN_BODY].textures![this.getSpriteString()]);
 
 
+        this.sprite.scale.x = this.flip ? -1 : 1;
+
+    
+
+        this.sprite.anchor.set(0.5);
+        this.sprite.position.set(this.offset?.x, this.offset?.y);
+        
+        this.sprite.tint = this.tint || 0xFFFFFF;
+
+  
+        this.stage.addChild(this.sprite);
+       // this.sprite.play();
+    }
+    
+
+
+    draw(): void {
+        const app = HSmile.get().app!;
+       // this.spritePart!.textures = app.loader.resources[HS_HUMAN_BODY].textures![this.getSpriteString()];       
+        if ( !this.sprite || !this.spriteFrames )
+            return;
+
+
+        this.sprite.texture = app.loader.resources[HS_HUMAN_BODY].textures![this.getSpriteString()];   
+        this.sprite.scale.x = this.flip ? -1 : 1;
+        this.sprite.tint = this.tint || 0xFFFFFF;
     }
 
     update(): void {
@@ -75,34 +130,10 @@ export default class AvatarPart implements IAvatarPart {
                 break;
         }
     }
-    
-    createSprite(): void {
-        const app = HSmile.get().app!;
-
-        this.spritePart = new PIXI.Sprite(app.loader.resources[HS_HUMAN_BODY].textures![this.getSpriteString()]);
-        this.spritePart.scale.x = this.flip ? -1 : 1;
-
-        if ( false /* certain type of rotation... */ ) {
-            // flip image.
-        }
-
-        this.spritePart.anchor.set(0.5);
-        this.spritePart.position.set(this.offset?.x, this.offset?.y);
-
-  
-        this.stage.addChild(this.spritePart);
-    }
-    
-
-    draw(): void {
-        const app = HSmile.get().app!;
-        this.spritePart!.texture = app.loader.resources[HS_HUMAN_BODY].textures![this.getSpriteString()];       
-        this.spritePart.scale.x = this.flip ? -1 : 1; 
-    }
 
 
     getSpriteString(): string {
-        return `${HS_HUMAN_BODY}_${H}_${this.animationState}_${this.avatarPart}_${this.stylePart}_${this.styleRotation}_${this.animationFrame}.png`;
+        return `${HS_HUMAN_BODY}_${H}_${this.animationState}_${this.avatarPart}_${this.stylePart}_${this.styleRotation}_${this.currentAnimationFrame}.png`;
     }
 
 }

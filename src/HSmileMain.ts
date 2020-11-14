@@ -136,7 +136,7 @@ export class HSmile {
                     backgroundColor: 0x000000,
                     antialias: false,
                     autoDensity: true,
-                    resolution: 1,
+                    resolution: window.devicePixelRatio || 1,
                     
                 }
             );    

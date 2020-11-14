@@ -1,3 +1,4 @@
+import { Prepare } from "pixi.js";
 import { AnimationStates, AvatarParts, AvatarRotations } from "./AvatarTypes";
 
 export default interface IAvatarPart {
@@ -6,5 +7,7 @@ export default interface IAvatarPart {
     stylePart?: number;
     rotation?: number;
     styleRotation?: AvatarRotations;
+    currentAnimationFrame?: number;
 
+    prepareSprites(): void;
 }
