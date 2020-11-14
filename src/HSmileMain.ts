@@ -41,7 +41,8 @@ export class HSmile {
         app.loader.baseUrl = 'assets';
         
         app.loader
-            .add('room_tiles', 'room-basic/tiles/sprites.json');
+            .add('room_tiles', 'room-basic/tiles/sprites.json')
+            .add('hs_human_body', 'avatar/hs_human_body.json');
 
 
 
@@ -75,7 +76,9 @@ export class HSmile {
           */
          
 
-        this.room = new Room(app.stage, RoomModel.default6x6());
+        this.room = new Room(app.stage, RoomModel.default13x8());
+        
+
 
         app.ticker.add(this.gameLoop.bind(this));
     }   
@@ -85,7 +88,8 @@ export class HSmile {
     }
 
     gameLoop(): void {
-        
+        this.room?.update();
+        this.room?.draw();
     }
 
     eventsInit(): void {

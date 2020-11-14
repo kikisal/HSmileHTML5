@@ -13,6 +13,13 @@ export default class Vector {
         this.z = z ? z : 0;
     }
 
+    set(x: number, y: number, z?: number) {
+        this.x = x;
+        this.y = y;
+        if ( z )  
+            this.z = z;
+    }
+
     collapse() {
         [this.x, this.y, this.z] = [0, 0, 0];
     }

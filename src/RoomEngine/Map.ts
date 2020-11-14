@@ -40,7 +40,7 @@ export class Map {
         
         this.addStages();
         // generate map
-        this.generate();
+        //this.generate();
 
     }
 
