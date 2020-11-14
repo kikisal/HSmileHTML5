@@ -23,6 +23,8 @@ export default class AvatarPart implements IAvatarPart {
 
     currentAnimationFrame: number = 0; // num frames
 
+    animationSpeed: number = .14;
+
     
     flip: boolean = false;
 
@@ -31,7 +33,7 @@ export default class AvatarPart implements IAvatarPart {
     offset?: Vector;
 
     sprite?: PIXI.Sprite;
-    
+
     spriteFrames: HSmileSprite = {};
 
     constructor(stage: PIXI.Container, tint?: number) {
@@ -105,9 +107,24 @@ export default class AvatarPart implements IAvatarPart {
             this.flip = false;
 
         this.updateStyleRotation();
+        this.updateFrames();
     }
 
-    updateStyleRotation() {
+    updateFrames(): void {
+        const frames = this.spriteFrames[this.animationState];
+        
+        if ( frames > 1 ) { // there is animations to perform.
+            
+            if ( this.currentAnimationFrame > frames ) 
+                this.currentAnimationFrame = 0;
+            else
+                this.currentAnimationFrame += this.animationSpeed;
+
+            console.log(Math.round(this.currentAnimationFrame));
+        }
+    }
+
+    updateStyleRotation(): void {
         switch( this.rotation ) {
 
             case 0:
@@ -133,7 +150,7 @@ export default class AvatarPart implements IAvatarPart {
 
 
     getSpriteString(): string {
-        return `${HS_HUMAN_BODY}_${H}_${this.animationState}_${this.avatarPart}_${this.stylePart}_${this.styleRotation}_${this.currentAnimationFrame}.png`;
+        return `${HS_HUMAN_BODY}_${H}_${this.animationState}_${this.avatarPart}_${this.stylePart}_${this.styleRotation}_${Math.round(this.currentAnimationFrame)}.png`;
     }
 
 }

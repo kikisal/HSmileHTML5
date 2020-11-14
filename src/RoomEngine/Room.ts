@@ -29,7 +29,13 @@ export class Room {
         this.avatarPart.avatarPart = "bd";
         this.avatarPart.tint = 0xE4B799;
         this.avatarPart.rotation = 0;
-        this.avatarPart.animationState = 'wlk';   
+        this.avatarPart.animationState = 'wlk';
+
+        setInterval(() => {
+            this.avatarPart!.rotation += 1;
+            if ( this.avatarPart!.rotation > 7 )
+                this.avatarPart!.rotation = 0;
+        }, 1000);
 
 
         // this.avatarPart.draw();

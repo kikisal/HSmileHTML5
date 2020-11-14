@@ -13,7 +13,7 @@ export default class AvatarBody extends AvatarPart {
         const app = HSmile.get().app!;
 
         this.setSprites('std', 1);
-        this.setSprites('wlk', 4);    
+        this.setSprites('wlk', 3);    
     }
 
    
