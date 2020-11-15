@@ -6,13 +6,17 @@ import { HSmile } from "../HSmileMain";
 import AvatarPart from "../Avatar/AvatarPart";
 import AvatarHead from "../Avatar/Parts/AvatarHead";
 import AvatarBody from "../Avatar/Parts/AvatarBody";
+import AvatarLeftHand from "../Avatar/Parts/AvatarLeftHand";
+import AvatarRightHand from "../Avatar/Parts/AvatarRightHand";
+import AvatarComposer from "../Avatar/AvatarComposer";
+
 
 export class Room {
     root_stage: Container;
     map: Map;
     model: RoomModel;
 
-    avatarPart?: AvatarPart;
+    avatarComposer?: AvatarComposer;
 
     constructor(root_stage: Container, model: RoomModel) {
         this.root_stage = root_stage;
@@ -23,32 +27,32 @@ export class Room {
         //this.map.generate();
         const app = HSmile.get().app!;
 
-        this.avatarPart = new AvatarBody(this.root_stage);
-    
-       
-        this.avatarPart.avatarPart = "bd";
-        this.avatarPart.tint = 0xE4B799;
-        this.avatarPart.rotation = 0;
-        this.avatarPart.animationState = 'wlk';
+        this.avatarComposer = new AvatarComposer(this.root_stage);
+        this.avatarComposer.tint = 0xE4B799;
+        this.avatarComposer.rotation = 0;
+        /*
+        this.avatarComposer.tint = 0xE4B799;
+        this.avatarComposer.rotation = 0;
+        this.avatarComposer.animationState = 'std';*/
+        
+       /* setInterval(() => {
+            this.avatarComposer!.rotation += 1;
+            if( this.avatarComposer!.rotation > 7 )
+                this.avatarComposer!.rotation = 0;
+        }, 1000);*/
+        
 
-        setInterval(() => {
-            this.avatarPart!.rotation += 1;
-            if ( this.avatarPart!.rotation > 7 )
-                this.avatarPart!.rotation = 0;
-        }, 1000);
-
-
-        // this.avatarPart.draw();
+        // this.avatarComposer.draw();
 
 
     }
 
     update(): void {
-        this.avatarPart!.update();
+        this.avatarComposer!.update();
     }
     
     draw(): void {
         
-        this.avatarPart!.draw();
+        this.avatarComposer!.draw();
     }
 }

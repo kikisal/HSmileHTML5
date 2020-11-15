@@ -543,7 +543,8 @@
 	"hs_human_body_h_std_hd_1_0_0.png": {
 		"frame": {"x":68, "y":329, "w":28, "h":28},
 		"spriteSourceSize": {"x":0,"y":0,"w":28,"h":28},
-		"sourceSize": {"w":28,"h":28}
+		"sourceSize": {"w":28,"h":28},
+		"offset": {"x": 0, "y": 0}
 	},
 	"hs_human_body_h_drk_rh_1_7_0.png": {
 		"frame": {"x":281, "y":319, "w":9, "h":14},

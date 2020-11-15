@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { DOM } from './DOM/Utility';
+import ResourceManager from './Resource/ResourceManager';
 import { Room } from './RoomEngine/Room';
 import RoomModel from './RoomEngine/RoomModel';
 
@@ -13,8 +14,10 @@ export class HSmile {
     private static instance: HSmile | undefined;
     private keys: object = {};
     private room: Room | undefined;
+    private resourceManager: ResourceManager;
 
     constructor() {
+        this.resourceManager = new ResourceManager();
         window.addEventListener('resize', this.resize.bind(this));
     }
 
@@ -105,7 +108,9 @@ export class HSmile {
         (<any>this.keys)[e.keyCode] = false;
     }
 
-
+    getResourceManager(): ResourceManager {
+        return this.resourceManager;
+    }
 
     static get(): HSmile {
         if (!HSmile.instance)
