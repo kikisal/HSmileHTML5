@@ -1,4 +1,4 @@
-import ResourceManager, { Offset, Resource } from "../ResourceManager";
+import ResourceManager, { ImageResource, Offset, Resource } from "../ResourceManager";
 import JsonParser from "./JsonParser";
 import {Frame} from './../ResourceManager';
 
@@ -30,7 +30,7 @@ export default class ImageJsonParser<HolderResType> extends JsonParser<HolderRes
                 const frm = frames[frame].frame;
                 framesObj.push(new Frame(frame, 
                     frm.x, 
-                    frm.y, 
+                    frm.y,
                     frm.w, 
                     frm.h,
                     // tonino addons 
@@ -39,9 +39,25 @@ export default class ImageJsonParser<HolderResType> extends JsonParser<HolderRes
             }
 
 
+            let resPacket = <ImageResource<HTMLImageElement>>this.rm_instance.get(res.name);
+
+            if ( !resPacket )
+                return null;
+
+            resPacket.frames = framesObj;
+            
+
             // load just one image.
             image.addEventListener('load', img => {
-                
+                if ( !img )
+                    return null;
+                    
+                resPacket.resource = <HTMLImageElement>img.target;
+                this.rm_instance.onProgress.call(resPacket);
+            });
+
+            image.addEventListener('error', err => {
+                // error event to add. (try other various attemps to load the entire sprite image.)
             });
         });
     }

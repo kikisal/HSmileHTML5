@@ -4,6 +4,9 @@ import Vector from "../Math/Vector";
 import ImageJsonParser from './parser/ImageJsonParser';
 import ResourceImageJsonParser from './parser/JsonParser';
 import ResourceParser from './parser/ResourceParser';
+import Task, { LoopTask } from './Task';
+
+const DEFAULT_DELAY_RESOURCE_NUM = 1000; // 1 sec.
 
 class PipeLine<CallBackType extends Function = () => void> {
 
@@ -47,6 +50,16 @@ interface IResource<MimeRes> {
     name: string;
     path: string;
     resource?: MimeRes;
+}
+
+/**
+ * primary purpose of it is to make sure all the resources 
+ * into the server have been loaded.
+ */
+class ResourceTask extends LoopTask {
+    constructor(delay: number = DEFAULT_DELAY_RESOURCE_NUM) {
+        super(delay);
+    }
 }
 
 export class Resource<MimeRes> {
@@ -96,7 +109,7 @@ export class ImageResource<MimeRes> implements IResource<MimeRes> {
     path: string;
     resource?: MimeRes;
 
-    frames?: Frame;
+    frames?: Frame[];
     
     constructor(name: string, path: string) {
         this.name = name;
@@ -113,7 +126,7 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
     onError: PipeLine<ErrorCallBackFunction>;
 
     // raw images only.
-    imagesRes: IResource<HolderResourceType>[];
+    resourcesArray: IResource<HolderResourceType>[];
     // not implemented yet. For audio resources
     // like credit sounds, alerts, chrome notification for staff
     // ticket alert, and so forth...
@@ -121,6 +134,8 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
     resourceLoaded: number = 0;
 
     resourceParser?: ResourceParser<HolderResourceType>; // default
+
+    task: ResourceTask;
 
 
     
@@ -132,11 +147,34 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
         this.onComplete = new PipeLine<CompleteCallBackFunction>();
         this.onError = new PipeLine<ErrorCallBackFunction>();
         // this.resourceParser = new ImageJsonParser(this);
-        this.imagesRes = [];
+        this.resourcesArray = [];
 
+        // this.onProgress.add( this.onProgressInternalEvent.bind(this) );
+
+
+        this.task = new ResourceTask();
+        this.task.runnable = this.resourceTask.bind(this);
+
+        this.task.start();
     }
 
- 
+
+    resourceTask(): void {
+
+        let resourceLoaded = 0;
+
+        for ( let i = 0; i < this.resourcesArray.length; ++i ) {
+            const resource = this.resourcesArray[i];
+            console.log(resource);
+            
+            if ( resource.resource )
+                resourceLoaded++;
+        }
+
+        if ( resourceLoaded === this.resourcesArray.length )
+            this.task.destroy();
+    }
+
 
     preload(): void {
 
@@ -150,16 +188,26 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
     }
 
     add( key: string, path: string ): void {
-        this.imagesRes.push(new Resource(key, path));
+        this.resourcesArray.push(new Resource(key, path));
+    }
+
+    get( key: string ): IResource<HolderResourceType> | null {
+        for ( let i = 0; i < this.resourcesArray.length; ++i ) {
+            const res = this.resourcesArray[i];
+            if ( res.name === key )
+                return res;
+        }
+
+        return null;
     }
 
     remove(key: string): void {
         const index = -1;
 
-        const rp = this.imagesRes.filter(e => e.name === key)[0];
+        const rp = this.resourcesArray.filter(e => e.name === key)[0];
         if ( !rp )
             return;
-        this.imagesRes.splice(this.imagesRes.indexOf(rp), 1);
+        this.resourcesArray.splice(this.resourcesArray.indexOf(rp), 1);
     }
 
     /**
@@ -186,12 +234,12 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
         if ( !this.resourceParser )
             throw new TypeError('Resource Parser has not been defined.');
 
-        if ( this.resourceLoaded === this.imagesRes.length )
+        if ( this.resourceLoaded === this.resourcesArray.length )
             return; //  resource already loaded.
 
-        const resToLoad = this.imagesRes.length;
+        const resToLoad = this.resourcesArray.length;
         for ( let i = 0; i < resToLoad; ++i ) {
-            const res = this.imagesRes[i];
+            const res = this.resourcesArray[i];
 
             fetch(this.baseUrl() + res.path).then(e => {
                 if ( !this.resourceParser )
