@@ -39,9 +39,6 @@ export default class ImageJsonParser<HolderResType> extends JsonParser<HolderRes
             }
 
 
-            console.log(framesObj);
-            
-
             // load just one image.
             image.addEventListener('load', img => {
                 
