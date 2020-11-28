@@ -1,6 +1,8 @@
 import * as PIXI from 'pixi.js';
 import { DOM } from './DOM/Utility';
-import ResourceManager from './Resource/ResourceManager';
+import ImageJsonParser from './Resource/parser/ImageJsonParser';
+
+import ResourceManager, { ImageResource } from './Resource/ResourceManager';
 import { Room } from './RoomEngine/Room';
 import RoomModel from './RoomEngine/RoomModel';
 
@@ -14,10 +16,10 @@ export class HSmile {
     private static instance: HSmile | undefined;
     private keys: object = {};
     private room: Room | undefined;
-    private resourceManager: ResourceManager;
+    private resourceImageManager: ResourceManager<HTMLImageElement, ImageResource<HTMLImageElement>>;
 
     constructor() {
-        this.resourceManager = new ResourceManager();
+        this.resourceImageManager = new ResourceManager();
         window.addEventListener('resize', this.resize.bind(this));
     }
 
@@ -38,23 +40,14 @@ export class HSmile {
         if ( !app )
             return;
 
-        
-        // preload assets
-        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-        app.loader.baseUrl = 'assets';
-        
-        app.loader
-            .add('room_tiles', 'room-basic/tiles/sprites.json')
-            .add('hs_human_body', 'avatar/hs_human_body.json');
+        this.resourceImageManager.resourceParser = new ImageJsonParser(this.resourceImageManager);
 
+        this.resourceImageManager.onProgress.add(this.onProgressResourceLoader.bind(this));
+        this.resourceImageManager.onComplete.add(this.onResourceLoaded.bind(this));
+        this.resourceImageManager.onError.add(this.resourceLoadingError.bind(this));
 
-
-        app.loader.onProgress.add(this.onProgressResourceLoader.bind(this));
-        app.loader.onComplete.add(this.onResourceLoaded.bind(this));
-        app.loader.onError.add(this.resourceLoadingError.bind(this));
-
-        app.loader.load();
-
+        this.resourceImageManager.preload();
+       
         this.eventsInit();
     }
 
@@ -64,20 +57,7 @@ export class HSmile {
 
     onResourceLoaded(e: any): void {
         const app = this.app!;
-        
-
-     
-        // player object
-        /*
-        const player = PIXI.Sprite.from(app.loader.resources.sprite09.texture);
-        
-        player.anchor.set(0.5);
-        player.x = 16;
-        player.y =  app.view.height / 2;
-   
-        app.stage.addChild(player);
-          */
-         
+        console.log('ON resource loaded');
 
         this.room = new Room(app.stage, RoomModel.default13x8());
         
@@ -108,8 +88,8 @@ export class HSmile {
         (<any>this.keys)[e.keyCode] = false;
     }
 
-    getResourceManager(): ResourceManager {
-        return this.resourceManager;
+    getResourceImageManager(): ResourceManager<HTMLImageElement> {
+        return this.resourceImageManager;
     }
 
     static get(): HSmile {
@@ -142,20 +122,19 @@ export class HSmile {
                     antialias: false,
                     autoDensity: true,
                     resolution: window.devicePixelRatio || 1,
-                    
                 }
             );    
 
-  
             
             viewOut.appendChild(app.view);
             
-
             const hsmile = HSmile.get();
 
             hsmile.setApp(app);
             hsmile.init();
+
             return hsmile;
+
         } catch ( ex ) {
             // handle error webgl.
             throw ex;

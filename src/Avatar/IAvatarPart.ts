@@ -10,7 +10,6 @@ export default interface IAvatarPart {
     styleRotation?: AvatarRotations;
     currentAnimationFrame?: number;
 
-    loadOffsets(): void;
     prepareSprites(): void;
     update(): void;
     draw(): void;

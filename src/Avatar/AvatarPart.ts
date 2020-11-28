@@ -31,7 +31,7 @@ export default class AvatarPart implements IAvatarPart {
     tint?: number;
 
     offset?: Vector;
-    offsetArray: {[key: string]: Vector}; // each direction has a specific offset
+
     
 
     sprite?: PIXI.Sprite;
@@ -42,20 +42,9 @@ export default class AvatarPart implements IAvatarPart {
         this.stage = stage;
         this.offset = offset ? offset : new Vector();
         this.tint = tint;
-        this.offsetArray = {};
-        this.loadOffsets();
+  
+
         this.createSprite();
-    }
-
-    /**
-     * @description default behavior: No offset to each avatar part.
-     */
-    loadOffsets(): void {
-        const hsmile = HSmile.get();
-        const app = hsmile.app!;
-        
-        hsmile.getResourceManager().loadOffsets(this.offsetArray, app.loader.resources[HS_HUMAN_BODY].url);
-
     }
 
     prepareSprites(): void {
@@ -79,7 +68,7 @@ export default class AvatarPart implements IAvatarPart {
 
         this.sprite = new PIXI.Sprite(app.loader.resources[HS_HUMAN_BODY].textures![this.getSpriteString()]);
 
-
+    
         this.sprite.scale.x = this.flip ? -1 : 1;
 
     
