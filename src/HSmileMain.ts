@@ -24,17 +24,11 @@ export class HSmile {
     }
 
     resize() {
-        /*
-        this.camera.width = this.renderer.screen.width;
-        this.camera.height = this.renderer.screen.height;
-        */
-       const app = this.app!;
-
+        const app = this.app!;
         app.renderer.resize(window.innerWidth, window.innerHeight);
     }
 
     init(): void {
-
         const app = this.app;
 
         if ( !app )
@@ -45,6 +39,7 @@ export class HSmile {
         this.resourceImageManager.onProgress.add(this.onProgressResourceLoader.bind(this));
         this.resourceImageManager.onComplete.add(this.onResourceLoaded.bind(this));
         this.resourceImageManager.onError.add(this.resourceLoadingError.bind(this));
+
 
         this.resourceImageManager.preload();
        
@@ -61,13 +56,13 @@ export class HSmile {
 
         this.room = new Room(app.stage, RoomModel.default13x8());
         
-
-
         app.ticker.add(this.gameLoop.bind(this));
     }   
 
     onProgressResourceLoader(e: any): void {
-        console.log('progressing loading resources: ', e.progress);
+
+        document.getElementById('splash-screen')!.innerText = `Hey, HSmile sta caricando: ${e}%`;
+
     }
 
     gameLoop(): void {

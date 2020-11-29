@@ -45,7 +45,7 @@ export default class ImageJsonParser<HolderResType> extends JsonParser<HolderRes
                 return null;
 
             resPacket.frames = framesObj;
-            
+            resPacket.ready = true;
 
             // load just one image.
             image.addEventListener('load', img => {
@@ -53,11 +53,10 @@ export default class ImageJsonParser<HolderResType> extends JsonParser<HolderRes
                     return null;
                     
                 resPacket.resource = <HTMLImageElement>img.target;
-                this.rm_instance.onProgress.call(resPacket);
             });
 
             image.addEventListener('error', err => {
-                // error event to add. (try other various attemps to load the entire sprite image.)
+                
             });
         });
     }

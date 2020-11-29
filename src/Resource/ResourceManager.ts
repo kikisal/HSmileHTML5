@@ -49,6 +49,7 @@ type ImagesLoaderFunction = (e: any) => void;
 interface IResource<MimeRes> {
     name: string;
     path: string;
+    ready: boolean;
     resource?: MimeRes;
 }
 
@@ -66,6 +67,7 @@ export class Resource<MimeRes> {
     name: string;
     path: string;
     resource?: MimeRes;
+    ready: boolean = false;
 
     constructor(name: string, path: string) {
         this.name = name;
@@ -108,6 +110,7 @@ export class ImageResource<MimeRes> implements IResource<MimeRes> {
     name: string;
     path: string;
     resource?: MimeRes;
+    ready: boolean = false;
 
     frames?: Frame[];
     
@@ -160,22 +163,23 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
 
 
     resourceTask(): void {
-
-        let resourceLoaded = 0;
+        
+        console.log(`resource task: ${this.resourceLoaded}`);
 
         for ( let i = 0; i < this.resourcesArray.length; ++i ) {
             const resource = this.resourcesArray[i];
-            console.log(resource);
+   
             
-            if ( resource.resource )
-                resourceLoaded++;
+            if ( resource.resource ) {
+                this.resourceLoaded++;
+            }
         }
 
-        if ( resourceLoaded === this.resourcesArray.length )
+        if ( this.resourceLoaded === this.resourcesArray.length )
             this.task.destroy();
+
     }
-
-
+    
     preload(): void {
 
         this.settings.SCALE_MODE = SCALE_MODES.NEAREST;
@@ -183,6 +187,11 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
 
         this.add('room_tiles', 'room-basic/tiles/sprites.json');
         this.add('hs_human_body', 'avatar/hs_human_body.json');
+    
+
+        for ( let i = 0; i < 100; ++i ) {
+            this.add('hs_human_body_' + i, 'avatar/hs_human_body.json?id=' + i);   
+        }
 
         this.load();
     }
@@ -235,18 +244,21 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
             throw new TypeError('Resource Parser has not been defined.');
 
         if ( this.resourceLoaded === this.resourcesArray.length )
-            return; //  resource already loaded.
+            return; //  resources already loaded.
 
         const resToLoad = this.resourcesArray.length;
         for ( let i = 0; i < resToLoad; ++i ) {
             const res = this.resourcesArray[i];
+
+            if ( res.resource )
+                continue; // reasource already in memory.
 
             fetch(this.baseUrl() + res.path).then(e => {
                 if ( !this.resourceParser )
                     return;
                 // once the resource really has been parsed, increase the counter.
                 this.resourceParser.parse(e, res).then(res => {
-                    this.onProgress.call(res);
+                    this.onProgress.call(Math.floor((this.resourceLoaded / this.resourcesArray.length)*100));
                 }).catch(err => {
                     this.onError.call(err);
                 });
