@@ -51,9 +51,7 @@ export class HSmile {
     }
 
     onResourceLoaded(e: any): void {
-        const app = this.app!;
-        console.log('ON resource loaded');
-        
+        const app = this.app!;        
         // HSMile risorse hs_human_body + suoni caricate
         // ora stabilisci connessione con emu... coming soon
 
