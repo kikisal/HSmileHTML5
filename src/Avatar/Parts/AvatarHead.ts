@@ -10,11 +10,12 @@ export default class AvatarHead extends AvatarPart {
 
 
     constructor(stage: PIXI.Container, tint?: number) {
-        super(stage, new Vector(-3, -39), tint);
+        super(stage, tint);
+        this.position.y = -35;
         this.stylePart = 2;
         this.avatarPart = 'hd';
         this.animationSpeed = .06;
-
+   
     }
 
 

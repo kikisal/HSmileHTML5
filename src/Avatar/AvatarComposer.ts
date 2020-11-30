@@ -2,6 +2,8 @@ import * as PIXI from 'pixi.js';
 import IAvatarPart from './IAvatarPart';
 import AvatarBody from './Parts/AvatarBody';
 import AvatarHead from './Parts/AvatarHead';
+import AvatarLeftHand from './Parts/AvatarLeftHand';
+import AvatarRightHand from './Parts/AvatarRightHand';
 
 // this class combine each avatar part.
 
@@ -20,7 +22,9 @@ export default class AvatarComposer {
     constructor( stage: PIXI.Container ) {
         this.parent = stage;
         this.avatarParts = [];
+
         this.avatar_stage = new PIXI.Container;
+
         this.parent.addChild(this.avatar_stage);
 
         this.setAvatarParts();
@@ -30,14 +34,16 @@ export default class AvatarComposer {
         this.avatarParts = [
             new AvatarBody(this.avatar_stage, this.tint),
             new AvatarHead(this.avatar_stage, this.tint),
+           /* new AvatarLeftHand(this.avatar_stage, this.tint),
+            new AvatarRightHand(this.avatar_stage, this.tint)*/
         ]
     }
 
     draw(): void {
         this.avatarParts.forEach(e => {
-            e.rotation = this.rotation;
+            e.rotation = (<any>window).rotation || 0;
             e.tint = this.tint;
-            e.draw()
+            e.draw();
         });
     }
 

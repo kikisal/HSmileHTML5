@@ -7,7 +7,10 @@ import { HS_HUMAN_BODY } from '../GlobalTexts';
 
 export default class AvatarBody extends AvatarPart {
     constructor(stage: PIXI.Container, tint?: number) {
-        super(stage, new Vector(0, 0), tint);
+        super(stage, tint);
+
+        this.animationSpeed = .18;
+        this.animationState = 'std';
     }
 
     prepareSprites() {

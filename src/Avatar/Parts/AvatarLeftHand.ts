@@ -7,15 +7,17 @@ import { HS_HUMAN_BODY } from '../GlobalTexts';
 
 export default class AvatarLeftHand extends AvatarPart {
     constructor(stage: PIXI.Container, tint?: number) {
-        super(stage, new Vector(), tint);
+        super(stage, tint);
         this.avatarPart = 'lh';
-        this.animationSpeed = .06;
+        this.animationState = 'wlk';
+        this.animationSpeed = .18;
         
     }
 
     // sprite configuration
     prepareSprites() {
         this.setSprites('std', 1);
+        this.setSprites('wlk', 4);
       //  this.setSprites('spk', 2);
     }
    

@@ -31,17 +31,18 @@ export default class AvatarPart implements IAvatarPart {
 
     tint?: number;
 
-    offset?: Vector;
-
     
 
     sprite?: PIXI.Sprite;
 
     spriteFrames: HSmileSprite = {};
 
-    constructor(stage: PIXI.Container, offset?: Vector, tint?: number) {
+
+    position: Vector = new Vector();
+
+    constructor(stage: PIXI.Container, tint?: number) {
         this.stage = stage;
-        this.offset = offset ? offset : new Vector();
+
         this.tint = tint;
   
 
@@ -67,11 +68,14 @@ export default class AvatarPart implements IAvatarPart {
         this.prepareSprites();
  
 
-        this.sprite = new PIXI.Sprite(app.getResourceImageManager().get(HS_HUMAN_BODY)!.apply(this.getSpriteString())!);
+        this.sprite = new PIXI.Sprite(app.getResourceImageManager().get(HS_HUMAN_BODY)!.getTexture(this.getSpriteString())!);
+
+        const offset = app.getResourceImageManager().get(HS_HUMAN_BODY)!.getFrame(this.getSpriteString())!.offset;
 
     
         this.sprite.scale.x = this.flip ? -1 : 1;
-
+        this.sprite.position.x = this.position.x + offset.x;
+        this.sprite.position.y = this.position.y + offset.y;
     
 
         this.sprite.anchor.set(0.5);
@@ -95,9 +99,14 @@ export default class AvatarPart implements IAvatarPart {
         if ( !this.sprite || !this.spriteFrames )
             return;
 
+        const offset = app.getResourceImageManager().get(HS_HUMAN_BODY)!.getFrame(this.getSpriteString())!.offset;
+     
 
-        this.sprite.texture = app.getResourceImageManager().get(HS_HUMAN_BODY)!.apply(this.getSpriteString())!;   
+        this.sprite.texture = app.getResourceImageManager().get(HS_HUMAN_BODY)!.getTexture(this.getSpriteString())!;   
         this.sprite.scale.x = this.flip ? -1 : 1;
+        this.sprite.position.x = this.position.x + (!this.flip ? offset.x : offset.flip.x);
+        this.sprite.position.y = this.position.y + (!this.flip ? offset.y : offset.flip.y);
+    
         this.sprite.tint = this.tint || 0xFFFFFF;
     }
 
@@ -128,7 +137,7 @@ export default class AvatarPart implements IAvatarPart {
         
         if ( frames > 1 ) { // there is animations to perform.
             
-            if ( this.currentAnimationFrame > frames - 1 ) 
+            if ( this.currentAnimationFrame > frames) 
                 this.currentAnimationFrame = 0;
             else
                 this.currentAnimationFrame += this.animationSpeed;
@@ -162,7 +171,11 @@ export default class AvatarPart implements IAvatarPart {
 
 
     getSpriteString(): string {
-        return `${HS_HUMAN_BODY}_${H}_${this.animationState}_${this.avatarPart}_${this.stylePart}_${this.styleRotation}_${Math.round(this.currentAnimationFrame)}.png`;
+        let animationFrame = Math.floor(this.currentAnimationFrame);
+        if ( animationFrame > this.spriteFrames[this.animationState] - 1 )
+            animationFrame = this.spriteFrames[this.animationState] - 1;
+
+        return `${HS_HUMAN_BODY}_${H}_${this.animationState}_${this.avatarPart}_${this.stylePart}_${this.styleRotation}_${animationFrame}.png`;
     }
 
 }

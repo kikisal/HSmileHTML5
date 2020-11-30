@@ -4,6 +4,7 @@ import { LoopTask } from "../Task";
 import {Frame} from '../ResourceManagerImage';
 import ResourceParser from "./ResourceParser";
 import * as PIXI from 'pixi.js';
+import Vector from "../../Math/Vector";
 
 export default class ImageJsonParser<HolderResType> extends ResourceParser<HolderResType> {
 
@@ -69,7 +70,7 @@ export default class ImageJsonParser<HolderResType> extends ResourceParser<Holde
                 frm.w, 
                 frm.h,
                 // tonino addons 
-                new Offset(frames[frame].offset.x, frames[frame].offset.y)
+                new Offset(frames[frame].offset.x, frames[frame].offset.y, ('flip' in frames[frame].offset) ? frames[frame].offset.flip : new Vector())
             ));
         }
         
@@ -98,7 +99,8 @@ export default class ImageJsonParser<HolderResType> extends ResourceParser<Holde
 
             this.image_res = <HTMLImageElement>img.target;
             resPacket.resource = <HTMLImageElement>img.target;
-            resPacket.texture = new PIXI.Texture(PIXI.BaseTexture.from(this.image_res));
+
+            resPacket.build(PIXI.BaseTexture.from(this.image_res));
 
         });
 

@@ -14,8 +14,12 @@
 			"spriteSourceSize": {"x":0,"y":0,"w":25,"h":31},
 			"sourceSize": {"w":25,"h":31},
 			"offset": {
-				"x": 0,
-				"y": 0
+				"x": -2,
+				"y": -2,
+				"flip": {
+					"x": 0,
+					"y": -3
+				}
 			}
 		},
 		"hs_human_body_h_wlk_rh_1_0_3.png": {
@@ -195,7 +199,7 @@
 			"sourceSize": {"w":26,"h":31},
 			"offset": {
 				"x": 0,
-				"y": 0
+				"y": -3
 			}
 		},
 		"hs_human_body_h_respect_lh_1_4_1.png": {
@@ -545,8 +549,8 @@
 			"spriteSourceSize": {"x":0,"y":0,"w":27,"h":28},
 			"sourceSize": {"w":27,"h":28},
 			"offset": {
-				"x": 0,
-				"y": 0
+				"x": -3,
+				"y": -3
 			}
 		},
 		"hs_human_body_h_wlk_lh_1_7_3.png": {
@@ -976,9 +980,8 @@
 			"frame": {"x":68, "y":329, "w":28, "h":28},
 			"spriteSourceSize": {"x":0,"y":0,"w":28,"h":28},
 			"sourceSize": {"w":28,"h":28},
-			"offset": {"x": 0, "y": 0},
 			"offset": {
-				"x": 0,
+				"x": 0, 
 				"y": 0
 			}
 		},
@@ -1869,8 +1872,8 @@
 			"spriteSourceSize": {"x":0,"y":0,"w":27,"h":28},
 			"sourceSize": {"w":27,"h":28},
 			"offset": {
-				"x": 0,
-				"y": 0
+				"x": -2,
+				"y": -1
 			}
 		},
 		"hs_human_body_h_wlk_rh_1_7_2.png": {

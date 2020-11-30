@@ -21,6 +21,7 @@ export class HSmile {
 
     constructor() {
         this.resourceImageManager = new ResourceManagerImage(new ImageJsonParser());
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
         window.addEventListener('resize', this.resize.bind(this));
     }
 
@@ -51,11 +52,13 @@ export class HSmile {
     }
 
     onResourceLoaded(e: any): void {
-        const app = this.app!;        
+        const app = this.app!;
         // HSMile risorse hs_human_body + suoni caricate
-        // ora stabilisci connessione con emu... coming soon
+        // ora stabilisci connessione con emu... [DA FARE]
 
+        // ...
         // ... emu connections, start receiveing events from it
+
 
         this.room = new Room(app.stage, RoomModel.default13x8());
 

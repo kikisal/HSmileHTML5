@@ -80,10 +80,12 @@ export class Resource<MimeRes> {
 export class Offset {
     x: number;
     y: number;
+    flip: Vector;
 
-    constructor(x: number, y: number) {
+    constructor(x: number = 0, y: number = 0, flip: Vector = new Vector()) {
         this.x = x;
         this.y = y;
+        this.flip = flip;
     }
 }
 
@@ -96,6 +98,8 @@ export class Frame {
     h: number;
 
     offset: Offset;
+    
+    texture?: PIXI.Texture;
 
     constructor(name: string, x: number, y: number, w: number, h: number, offset: Offset) {
         this.name = name;
@@ -116,8 +120,8 @@ export class ImageResource<MimeRes> implements IResource<MimeRes> {
     task: ResourceParser<MimeRes>;
 
     frames?: Frame[];
-    texture?: PIXI.Texture;
-    
+
+
     constructor(name: string, path: string, task: ResourceParser<MimeRes>) {
         this.name = name;
         this.path = path;
@@ -134,14 +138,15 @@ export class ImageResource<MimeRes> implements IResource<MimeRes> {
         return null;
     }
 
-    apply( frameName: string ): PIXI.Texture {
-        const frame = this.getFrame(frameName);
-        if ( !frame ) // old status.
-            return this.texture!;
+    build(baseTexture: PIXI.BaseTexture): void {
+        for ( let i = 0; i < this.frames!.length; ++i ) {
+            const frame = this.frames![i];
+            frame.texture = new PIXI.Texture(baseTexture, new PIXI.Rectangle(frame.x, frame.y, frame.w, frame.h));
+        }
+    }
 
-        this.texture!.frame = new PIXI.Rectangle(frame.x, frame.y, frame.w, frame.h);
-        
-        return this.texture!;
+    getTexture( frameName: string ): PIXI.Texture {
+        return this.getFrame(frameName)?.texture!;
     }
 }
 

@@ -30,16 +30,19 @@ export class Room {
         this.avatarComposer = new AvatarComposer(this.root_stage);
         this.avatarComposer.tint = 0xE4B799;
         this.avatarComposer.rotation = 0;
+        
+        
+
         /*
         this.avatarComposer.tint = 0xE4B799;
         this.avatarComposer.rotation = 0;
         this.avatarComposer.animationState = 'std';*/
         
-       /* setInterval(() => {
+        setInterval(() => {
             this.avatarComposer!.rotation += 1;
             if( this.avatarComposer!.rotation > 7 )
                 this.avatarComposer!.rotation = 0;
-        }, 1000);*/
+        }, 1000);
         
 
         // this.avatarComposer.draw();
