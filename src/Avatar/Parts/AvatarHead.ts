@@ -24,14 +24,21 @@ export default class AvatarHead extends AvatarPart {
         super.update();
 
         switch( this.rotation ) {
-            
+            case 0:
+                this.position.x = 2;
+                
+                break;
+
+            case 3:
+                this.position.x = 0;
+                break;
             case 4:
                 this.position.y = -34;
                 this.position.x = 1;
                 break;
 
             case 7:
-                this.position.x = -1;
+                this.position.x = -.5;
                 break;
             default:
                 this.position.y = -35;

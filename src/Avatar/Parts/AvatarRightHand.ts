@@ -53,7 +53,8 @@ export default class AvatarRightHand extends AvatarPart {
                 break;
 
             case 7:
-                this.position.x = 13;
+               // this.zIndex = -1;
+                this.position.x = 12;
                 this.position.y = -7;
                 break;
         }

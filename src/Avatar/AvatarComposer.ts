@@ -42,7 +42,7 @@ export default class AvatarComposer {
 
     draw(): void {
         this.avatarParts.forEach(e => {
-            e.rotation = (<any>window).rotation || 7;
+            e.rotation = (<any>window).rotation || 3;
             e.tint = this.tint;
             e.draw();
         });
