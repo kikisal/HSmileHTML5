@@ -41,9 +41,13 @@ export class LoopTask extends Task {
     
     delay: number;
 
+    
+
     constructor(delay: number) {
         super();
         this.delay = delay;
+
+       
     }
 
     start(): void {

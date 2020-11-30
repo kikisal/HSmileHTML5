@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { DOM } from './DOM/Utility';
 import ImageJsonParser from './Resource/parser/ImageJsonParser';
+import ResourceParser from './Resource/parser/ResourceParser';
 
 import ResourceManager, { ImageResource } from './Resource/ResourceManager';
 import { Room } from './RoomEngine/Room';
@@ -16,10 +17,10 @@ export class HSmile {
     private static instance: HSmile | undefined;
     private keys: object = {};
     private room: Room | undefined;
-    private resourceImageManager: ResourceManager<HTMLImageElement, ImageResource<HTMLImageElement>>;
+    private resourceImageManager: ResourceManager<HTMLImageElement>;
 
     constructor() {
-        this.resourceImageManager = new ResourceManager();
+        this.resourceImageManager = new ResourceManager(new ImageJsonParser());
         window.addEventListener('resize', this.resize.bind(this));
     }
 
@@ -34,8 +35,7 @@ export class HSmile {
         if ( !app )
             return;
 
-        this.resourceImageManager.resourceParser = new ImageJsonParser(this.resourceImageManager);
-
+            
         this.resourceImageManager.onProgress.add(this.onProgressResourceLoader.bind(this));
         this.resourceImageManager.onComplete.add(this.onResourceLoaded.bind(this));
         this.resourceImageManager.onError.add(this.resourceLoadingError.bind(this));
@@ -47,22 +47,22 @@ export class HSmile {
     }
 
     resourceLoadingError(e: any): void {
-        console.error('there were an error in loading resource: ', e.message);
+        console.error('there was an error in loading resource: ', e);
     }
 
     onResourceLoaded(e: any): void {
         const app = this.app!;
         console.log('ON resource loaded');
-
+        
+/*
         this.room = new Room(app.stage, RoomModel.default13x8());
         
         app.ticker.add(this.gameLoop.bind(this));
+*/
     }   
 
     onProgressResourceLoader(e: any): void {
-
-        document.getElementById('splash-screen')!.innerText = `Hey, HSmile sta caricando: ${e}%`;
-
+        console.log(e);
     }
 
     gameLoop(): void {

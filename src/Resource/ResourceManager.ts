@@ -2,7 +2,6 @@ import * as PIXI from 'pixi.js';
 import { HSmile } from "../HSmileMain";
 import Vector from "../Math/Vector";
 import ImageJsonParser from './parser/ImageJsonParser';
-import ResourceImageJsonParser from './parser/JsonParser';
 import ResourceParser from './parser/ResourceParser';
 import Task, { LoopTask } from './Task';
 
@@ -51,6 +50,7 @@ interface IResource<MimeRes> {
     path: string;
     ready: boolean;
     resource?: MimeRes;
+    task: ResourceParser<MimeRes>;
 }
 
 /**
@@ -68,10 +68,12 @@ export class Resource<MimeRes> {
     path: string;
     resource?: MimeRes;
     ready: boolean = false;
+    task: ResourceParser<MimeRes>;
 
-    constructor(name: string, path: string) {
+    constructor(name: string, path: string, task: ResourceParser<MimeRes>) {
         this.name = name;
         this.path = path;
+        this.task = task;
     }
 }
 
@@ -111,16 +113,20 @@ export class ImageResource<MimeRes> implements IResource<MimeRes> {
     path: string;
     resource?: MimeRes;
     ready: boolean = false;
+    task: ResourceParser<MimeRes>;
 
     frames?: Frame[];
+
+    texture?: PIXI.Texture;
     
-    constructor(name: string, path: string) {
+    constructor(name: string, path: string, task: ResourceParser<MimeRes>) {
         this.name = name;
         this.path = path;
+        this.task = task;
     }
 }
 
-export default class ResourceManager<HolderResourceType, ResourceType = ImageResource<HolderResourceType>> {
+export default class ResourceManager<HolderResourceType, ResourceType = ImageResource<HTMLImageElement>> {
     
     settings: ResourceSetting;
 
@@ -136,48 +142,50 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
 
     resourceLoaded: number = 0;
 
-    resourceParser?: ResourceParser<HolderResourceType>; // default
+    resourceParser?: ImageJsonParser<HolderResourceType>;
 
-    task: ResourceTask;
+    completed: boolean = false;
 
 
-    
-
-    constructor() {
+    constructor(resParser: ImageJsonParser<HolderResourceType>) {
         this.settings = {};
 
         this.onProgress = new PipeLine<ProgressCallBackFunction>();
         this.onComplete = new PipeLine<CompleteCallBackFunction>();
         this.onError = new PipeLine<ErrorCallBackFunction>();
-        // this.resourceParser = new ImageJsonParser(this);
+
         this.resourcesArray = [];
 
-        // this.onProgress.add( this.onProgressInternalEvent.bind(this) );
+        this.resourceParser = resParser;
+        this.resourceParser.rm_instance = this;
 
-
-        this.task = new ResourceTask();
-        this.task.runnable = this.resourceTask.bind(this);
-
-        this.task.start();
+        this.onProgress.add( this.onProgressInternalEvent.bind(this) );
     }
 
+    onProgressInternalEvent(): void {
 
-    resourceTask(): void {
-        
-        console.log(`resource task: ${this.resourceLoaded}`);
+        if ( this.completed )
+            return;
 
+        if ( this.getProgress() === 100 ) {
+            this.completed = true;
+            this.onComplete.call();
+        }
+    }
+
+    getProgress(): number {
+        return Math.floor(100 * (this.getResourceLoaded() / this.resourcesArray.length));
+    }
+
+    getResourceLoaded(): number {
+        let resLoaded = 0;
         for ( let i = 0; i < this.resourcesArray.length; ++i ) {
-            const resource = this.resourcesArray[i];
-   
-            
-            if ( resource.resource ) {
-                this.resourceLoaded++;
-            }
+            const res = this.resourcesArray[i];
+            if ( res.resource )
+                resLoaded++;
         }
 
-        if ( this.resourceLoaded === this.resourcesArray.length )
-            this.task.destroy();
-
+        return resLoaded;
     }
     
     preload(): void {
@@ -185,19 +193,26 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
         this.settings.SCALE_MODE = SCALE_MODES.NEAREST;
         this.settings.baseUrl = 'assets';
 
+
         this.add('room_tiles', 'room-basic/tiles/sprites.json');
         this.add('hs_human_body', 'avatar/hs_human_body.json');
     
 
-        for ( let i = 0; i < 100; ++i ) {
-            this.add('hs_human_body_' + i, 'avatar/hs_human_body.json?id=' + i);   
+        for ( let i = 1; i < 24; ++i ) {
+            this.add('hs_human_body_' + i, 'temp/hs_human_body_' + i + '.json');   
         }
 
         this.load();
     }
 
+
     add( key: string, path: string ): void {
-        this.resourcesArray.push(new Resource(key, path));
+
+
+        if ( !this.resourceParser )
+            return;
+
+        this.resourcesArray.push(new Resource(key, path, this.resourceParser.clone()));
     }
 
     get( key: string ): IResource<HolderResourceType> | null {
@@ -246,6 +261,8 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
         if ( this.resourceLoaded === this.resourcesArray.length )
             return; //  resources already loaded.
 
+        this.completed = false;
+
         const resToLoad = this.resourcesArray.length;
         for ( let i = 0; i < resToLoad; ++i ) {
             const res = this.resourcesArray[i];
@@ -253,18 +270,7 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
             if ( res.resource )
                 continue; // reasource already in memory.
 
-            fetch(this.baseUrl() + res.path).then(e => {
-                if ( !this.resourceParser )
-                    return;
-                // once the resource really has been parsed, increase the counter.
-                this.resourceParser.parse(e, res).then(res => {
-                    this.onProgress.call(Math.floor((this.resourceLoaded / this.resourcesArray.length)*100));
-                }).catch(err => {
-                    this.onError.call(err);
-                });
-            }).catch(err => {
-                this.onError.call(err);
-            });
+            res.task.parse(res);
         }
     }
 }
