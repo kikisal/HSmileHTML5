@@ -116,7 +116,6 @@ export class ImageResource<MimeRes> implements IResource<MimeRes> {
     task: ResourceParser<MimeRes>;
 
     frames?: Frame[];
-
     texture?: PIXI.Texture;
     
     constructor(name: string, path: string, task: ResourceParser<MimeRes>) {
@@ -124,9 +123,29 @@ export class ImageResource<MimeRes> implements IResource<MimeRes> {
         this.path = path;
         this.task = task;
     }
+
+    getFrame(frameName: string): Frame | null {
+        for ( let i = 0; i < this.frames!.length; ++i ) {
+            if( this.frames![i].name === frameName ) {
+                return this.frames![i];
+            }
+        }
+
+        return null;
+    }
+
+    apply( frameName: string ): PIXI.Texture {
+        const frame = this.getFrame(frameName);
+        if ( !frame ) // old status.
+            return this.texture!;
+
+        this.texture!.frame = new PIXI.Rectangle(frame.x, frame.y, frame.w, frame.h);
+        
+        return this.texture!;
+    }
 }
 
-export default class ResourceManager<HolderResourceType, ResourceType = ImageResource<HTMLImageElement>> {
+export default class ResourceManagerImage<HolderResourceType, ResourceType = ImageResource<HTMLImageElement>> {
     
     settings: ResourceSetting;
 
@@ -135,7 +154,7 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
     onError: PipeLine<ErrorCallBackFunction>;
 
     // raw images only.
-    resourcesArray: IResource<HolderResourceType>[];
+    resourcesArray: ImageResource<HolderResourceType>[];
     // not implemented yet. For audio resources
     // like credit sounds, alerts, chrome notification for staff
     // ticket alert, and so forth...
@@ -198,10 +217,6 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
         this.add('hs_human_body', 'avatar/hs_human_body.json');
     
 
-        for ( let i = 1; i < 24; ++i ) {
-            this.add('hs_human_body_' + i, 'temp/hs_human_body_' + i + '.json');   
-        }
-
         this.load();
     }
 
@@ -212,10 +227,10 @@ export default class ResourceManager<HolderResourceType, ResourceType = ImageRes
         if ( !this.resourceParser )
             return;
 
-        this.resourcesArray.push(new Resource(key, path, this.resourceParser.clone()));
+        this.resourcesArray.push(new ImageResource(key, path, this.resourceParser.clone()));
     }
 
-    get( key: string ): IResource<HolderResourceType> | null {
+    get( key: string ): ImageResource<HolderResourceType> | null {
         for ( let i = 0; i < this.resourcesArray.length; ++i ) {
             const res = this.resourcesArray[i];
             if ( res.name === key )

@@ -1,4 +1,4 @@
-import ResourceManager, { Resource } from "../ResourceManager";
+import ResourceManagerImage, { Resource } from "../ResourceManagerImage";
 import { LoopTask } from "../Task";
 
 export interface IResourceParser<HolderResourceType> {
@@ -9,7 +9,7 @@ export interface IResourceParser<HolderResourceType> {
 export default class ResourceParser<HolderResourceType> implements IResourceParser<HolderResourceType> {
     
     
-    rm_instance?: ResourceManager<HolderResourceType>;    
+    rm_instance?: ResourceManagerImage<HolderResourceType>;    
     loopTask?: LoopTask;
 
     

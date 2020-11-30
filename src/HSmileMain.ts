@@ -3,7 +3,7 @@ import { DOM } from './DOM/Utility';
 import ImageJsonParser from './Resource/parser/ImageJsonParser';
 import ResourceParser from './Resource/parser/ResourceParser';
 
-import ResourceManager, { ImageResource } from './Resource/ResourceManager';
+import ResourceManagerImage, { ImageResource } from './Resource/ResourceManagerImage';
 import { Room } from './RoomEngine/Room';
 import RoomModel from './RoomEngine/RoomModel';
 
@@ -17,10 +17,10 @@ export class HSmile {
     private static instance: HSmile | undefined;
     private keys: object = {};
     private room: Room | undefined;
-    private resourceImageManager: ResourceManager<HTMLImageElement>;
+    private resourceImageManager: ResourceManagerImage<HTMLImageElement>;
 
     constructor() {
-        this.resourceImageManager = new ResourceManager(new ImageJsonParser());
+        this.resourceImageManager = new ResourceManagerImage(new ImageJsonParser());
         window.addEventListener('resize', this.resize.bind(this));
     }
 
@@ -54,11 +54,17 @@ export class HSmile {
         const app = this.app!;
         console.log('ON resource loaded');
         
-/*
+        // HSMile risorse hs_human_body + suoni caricate
+        // ora stabilisci connessione con emu... coming soon
+
+        // ... emu connections, start receiveing events from it
+
         this.room = new Room(app.stage, RoomModel.default13x8());
+
         
+        // game loop
         app.ticker.add(this.gameLoop.bind(this));
-*/
+
     }   
 
     onProgressResourceLoader(e: any): void {
@@ -83,7 +89,7 @@ export class HSmile {
         (<any>this.keys)[e.keyCode] = false;
     }
 
-    getResourceImageManager(): ResourceManager<HTMLImageElement> {
+    getResourceImageManager(): ResourceManagerImage<HTMLImageElement> {
         return this.resourceImageManager;
     }
 

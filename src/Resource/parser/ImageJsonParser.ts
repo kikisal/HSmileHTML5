@@ -1,7 +1,9 @@
-import ResourceManager, { ImageResource, Offset, Resource } from "../ResourceManager";
+import { BaseTexture } from "pixi.js";
+import ResourceManagerImage, { ImageResource, Offset, Resource } from "../ResourceManagerImage";
 import { LoopTask } from "../Task";
-import {Frame} from './../ResourceManager';
+import {Frame} from '../ResourceManagerImage';
 import ResourceParser from "./ResourceParser";
+import * as PIXI from 'pixi.js';
 
 export default class ImageJsonParser<HolderResType> extends ResourceParser<HolderResType> {
 
@@ -83,6 +85,7 @@ export default class ImageJsonParser<HolderResType> extends ResourceParser<Holde
         resPacket.frames = framesObj;
         // resPacket.texture = new PIXI.Texture();
 
+
         // load just one image.
         image.addEventListener('load', img => {
             if ( !img )
@@ -95,6 +98,7 @@ export default class ImageJsonParser<HolderResType> extends ResourceParser<Holde
 
             this.image_res = <HTMLImageElement>img.target;
             resPacket.resource = <HTMLImageElement>img.target;
+            resPacket.texture = new PIXI.Texture(PIXI.BaseTexture.from(this.image_res));
 
         });
 

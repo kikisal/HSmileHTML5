@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { HSmile } from '../HSmileMain';
 import Vector from '../Math/Vector';
+import { ImageResource } from '../Resource/ResourceManagerImage';
 import { AnimationStates, AvatarParts, AvatarRotations } from "./AvatarTypes";
 import { HS_HUMAN_BODY, H } from './GlobalTexts';
 import IAvatarPart from "./IAvatarPart";
@@ -61,12 +62,12 @@ export default class AvatarPart implements IAvatarPart {
     }
 
     createSprite(): void {
-        const app = HSmile.get().app!;
+        const app = HSmile.get()!;
 
         this.prepareSprites();
  
 
-        this.sprite = new PIXI.Sprite(app.loader.resources[HS_HUMAN_BODY].textures![this.getSpriteString()]);
+        this.sprite = new PIXI.Sprite(app.getResourceImageManager().get(HS_HUMAN_BODY)!.apply(this.getSpriteString())!);
 
     
         this.sprite.scale.x = this.flip ? -1 : 1;
@@ -79,7 +80,8 @@ export default class AvatarPart implements IAvatarPart {
         
         this.sprite.tint = this.tint || 0xFFFFFF;
 
-        app.loader.resources[HS_HUMAN_BODY].textures![this.getSpriteString()];
+        // app.loader.resources[HS_HUMAN_BODY].textures![this.getSpriteString()];
+        
   
         this.stage.addChild(this.sprite);
        // this.sprite.play();
@@ -88,13 +90,13 @@ export default class AvatarPart implements IAvatarPart {
 
 
     draw(): void {
-        const app = HSmile.get().app!;
+        const app = HSmile.get()!;
        // this.spritePart!.textures = app.loader.resources[HS_HUMAN_BODY].textures![this.getSpriteString()];       
         if ( !this.sprite || !this.spriteFrames )
             return;
 
 
-        this.sprite.texture = app.loader.resources[HS_HUMAN_BODY].textures![this.getSpriteString()];   
+        this.sprite.texture = app.getResourceImageManager().get(HS_HUMAN_BODY)!.apply(this.getSpriteString())!;   
         this.sprite.scale.x = this.flip ? -1 : 1;
         this.sprite.tint = this.tint || 0xFFFFFF;
     }
