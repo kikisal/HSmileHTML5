@@ -16,6 +16,8 @@ export default class AvatarPart implements IAvatarPart {
     
     stage: PIXI.Container;
 
+    zIndex: number = 0;
+
     animationState: AnimationStates = 'std';
     avatarPart: AvatarParts = 'bd';
     stylePart: number = 1;
@@ -106,7 +108,7 @@ export default class AvatarPart implements IAvatarPart {
         this.sprite.scale.x = this.flip ? -1 : 1;
         this.sprite.position.x = this.position.x + (!this.flip ? offset.x : offset.flip.x);
         this.sprite.position.y = this.position.y + (!this.flip ? offset.y : offset.flip.y);
-    
+        this.sprite.zIndex = this.zIndex;
         this.sprite.tint = this.tint || 0xFFFFFF;
     }
 

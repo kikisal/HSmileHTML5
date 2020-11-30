@@ -24,6 +24,7 @@ export default class AvatarComposer {
         this.avatarParts = [];
 
         this.avatar_stage = new PIXI.Container;
+        this.avatar_stage.sortableChildren = true;
 
         this.parent.addChild(this.avatar_stage);
 
@@ -32,16 +33,16 @@ export default class AvatarComposer {
 
     private setAvatarParts(): void {
         this.avatarParts = [
-            new AvatarBody(this.avatar_stage, this.tint),
             new AvatarHead(this.avatar_stage, this.tint),
-           /* new AvatarLeftHand(this.avatar_stage, this.tint),
-            new AvatarRightHand(this.avatar_stage, this.tint)*/
+            new AvatarBody(this.avatar_stage, this.tint),
+            new AvatarLeftHand(this.avatar_stage, this.tint),
+            new AvatarRightHand(this.avatar_stage, this.tint)
         ]
     }
 
     draw(): void {
         this.avatarParts.forEach(e => {
-            e.rotation = (<any>window).rotation || 0;
+            e.rotation = (<any>window).rotation || 7;
             e.tint = this.tint;
             e.draw();
         });

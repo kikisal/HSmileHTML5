@@ -15,10 +15,29 @@ export default class AvatarHead extends AvatarPart {
         this.stylePart = 2;
         this.avatarPart = 'hd';
         this.animationSpeed = .06;
+        this.zIndex = 2;
    
     }
 
 
+    update(): void {
+        super.update();
+
+        switch( this.rotation ) {
+            
+            case 4:
+                this.position.y = -34;
+                this.position.x = 1;
+                break;
+
+            case 7:
+                this.position.x = -1;
+                break;
+            default:
+                this.position.y = -35;
+                break;
+        }
+    }
 
     // sprite configuration
     prepareSprites(): void {

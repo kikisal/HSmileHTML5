@@ -10,15 +10,15 @@
 			}
 		},
 		"hs_human_body_h_std_hd_2_2_0.png": {
-			"frame": {"x":182, "y":212, "w":25, "h":31},
+			"frame": {"x":182, "y":212, "w":26, "h":31},
 			"spriteSourceSize": {"x":0,"y":0,"w":25,"h":31},
 			"sourceSize": {"w":25,"h":31},
 			"offset": {
 				"x": -2,
-				"y": -2,
+				"y": -1,
 				"flip": {
 					"x": 0,
-					"y": -3
+					"y": -2
 				}
 			}
 		},
@@ -50,7 +50,7 @@
 			}
 		},
 		"hs_human_body_h_std_bd_1_1_0.png": {
-			"frame": {"x":304, "y":0, "w":19, "h":53},
+			"frame": {"x":304, "y":0, "w":20, "h":53},
 			"spriteSourceSize": {"x":0,"y":0,"w":20,"h":53},
 			"sourceSize": {"w":20,"h":53},
 			"offset": {
@@ -199,7 +199,7 @@
 			"sourceSize": {"w":26,"h":31},
 			"offset": {
 				"x": 0,
-				"y": -3
+				"y": -2
 			}
 		},
 		"hs_human_body_h_respect_lh_1_4_1.png": {
@@ -230,12 +230,12 @@
 			}
 		},
 		"hs_human_body_h_std_hd_2_7_0.png": {
-			"frame": {"x":179, "y":319, "w":26, "h":28},
+			"frame": {"x":179, "y":319, "w":26, "h":29},
 			"spriteSourceSize": {"x":0,"y":0,"w":26,"h":28},
 			"sourceSize": {"w":26,"h":28},
 			"offset": {
 				"x": 0,
-				"y": 0
+				"y": -3
 			}
 		},
 		"hs_human_body_h_blw_rh_1_0_0.png": {
@@ -329,7 +329,7 @@
 			}
 		},
 		"hs_human_body_h_std_rh_1_7_0.png": {
-			"frame": {"x":405, "y":382, "w":7, "h":32},
+			"frame": {"x":405, "y":382, "w":7, "h":33},
 			"spriteSourceSize": {"x":1,"y":0,"w":8,"h":32},
 			"sourceSize": {"w":8,"h":32},
 			"offset": {
@@ -500,7 +500,7 @@
 			}
 		},
 		"hs_human_body_h_std_lh_1_0_0.png": {
-			"frame": {"x":406, "y":156, "w":5, "h":26},
+			"frame": {"x":406, "y":156, "w":6, "h":26},
 			"spriteSourceSize": {"x":0,"y":0,"w":5,"h":26},
 			"sourceSize": {"w":5,"h":26},
 			"offset": {
@@ -545,12 +545,16 @@
 			}
 		},
 		"hs_human_body_h_std_hd_2_0_0.png": {
-			"frame": {"x":97, "y":371, "w":27, "h":28},
+			"frame": {"x":97, "y":371, "w":28, "h":29},
 			"spriteSourceSize": {"x":0,"y":0,"w":27,"h":28},
 			"sourceSize": {"w":27,"h":28},
 			"offset": {
 				"x": -3,
-				"y": -3
+				"y": -3,
+				"flip": {
+					"x": 2,
+					"y": -2
+				}
 			}
 		},
 		"hs_human_body_h_wlk_lh_1_7_3.png": {
@@ -1121,7 +1125,7 @@
 			}
 		},
 		"hs_human_body_h_spk_hd_2_2_1.png": {
-			"frame": {"x":179, "y":382, "w":25, "h":31},
+			"frame": {"x":179, "y":382, "w":25, "h":32},
 			"spriteSourceSize": {"x":0,"y":0,"w":25,"h":31},
 			"sourceSize": {"w":25,"h":31},
 			"offset": {
@@ -1868,12 +1872,16 @@
 			}
 		},
 		"hs_human_body_h_std_hd_2_1_0.png": {
-			"frame": {"x":100, "y":165, "w":27, "h":28},
+			"frame": {"x":100, "y":165, "w":28, "h":29},
 			"spriteSourceSize": {"x":0,"y":0,"w":27,"h":28},
 			"sourceSize": {"w":27,"h":28},
 			"offset": {
 				"x": -2,
-				"y": -1
+				"y": -1,
+				"flip": {
+					"x": 2,
+					"y": -1
+				}
 			}
 		},
 		"hs_human_body_h_wlk_rh_1_7_2.png": {
