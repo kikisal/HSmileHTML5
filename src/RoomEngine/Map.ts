@@ -358,4 +358,12 @@ export class Map {
         stage.addChild(tileSprite);
     }
 
+    update(): void {
+
+    }
+
+    draw(): void {
+        
+    }
+
 }

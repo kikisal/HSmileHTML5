@@ -37,6 +37,7 @@ export default class AvatarComposer {
 
         this.parent.addChild(this.avatar_stage);
         this.setAvatarParts();
+
     }
 
     private setAvatarParts(): void {
@@ -50,7 +51,7 @@ export default class AvatarComposer {
 
     draw(): void {
         this.avatarParts.forEach(e => {
-            e.rotation = (<any>window).rotation || 2;
+            e.rotation = (<any>window).rotation || this.rotation;
             e.tint = this.tint;
             e.alpha = this.alpha;
   

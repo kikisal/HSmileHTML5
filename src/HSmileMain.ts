@@ -7,6 +7,11 @@ import ResourceManagerImage, { ImageResource } from './Resource/ResourceManagerI
 import { Room } from './RoomEngine/Room';
 import RoomModel from './RoomEngine/RoomModel';
 
+type MousePosition = {
+    x?: number;
+    y?: number;
+    down?: boolean;
+}
 
 export class HSmile {
     // any. Typically we excpect the input to come 
@@ -15,7 +20,9 @@ export class HSmile {
     app: PIXI.Application | undefined;
     
     private static instance: HSmile | undefined;
-    private keys: object = {};
+    keys: object = {};
+    static mouse: MousePosition = {down: false};
+
     private room: Room | undefined;
     private resourceImageManager: ResourceManagerImage<HTMLImageElement>;
 
@@ -80,6 +87,23 @@ export class HSmile {
     eventsInit(): void {
         window.addEventListener('keydown', this.keyDown.bind(this));
         window.addEventListener('keyup', this.keyDown.bind(this));
+
+        window.addEventListener('mousemove', this.mouseMove.bind(this));
+        window.addEventListener('mousedown', this.mouseDown.bind(this));
+        window.addEventListener('mouseup', this.mouseUp.bind(this));
+    }
+
+    mouseMove(e: any): void {
+        HSmile.mouse.x = e.clientX;
+        HSmile.mouse.y = e.clientY;
+    }
+
+    mouseUp(e: any): void {
+        HSmile.mouse.down = false;
+    }
+
+    mouseDown(e: any): void {
+        HSmile.mouse.down = true;
     }
 
     keyDown(e: any): void {

@@ -39,9 +39,11 @@ export class Room {
 
     update(): void {
         this.avatarComposer!.update();
+        this.map.update();
     }
     
     draw(): void {
         this.avatarComposer!.draw();
+        this.map.draw();
     }
 }

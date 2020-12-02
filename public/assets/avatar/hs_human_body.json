@@ -194,7 +194,7 @@
 			}
 		},
 		"hs_human_body_h_std_hd_2_3_0.png": {
-			"frame": {"x":128, "y":111, "w":26, "h":31},
+			"frame": {"x":128, "y":111, "w":26, "h":32},
 			"spriteSourceSize": {"x":0,"y":0,"w":26,"h":31},
 			"sourceSize": {"w":26,"h":31},
 			"offset": {

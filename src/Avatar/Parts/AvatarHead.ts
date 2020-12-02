@@ -26,11 +26,15 @@ export default class AvatarHead extends AvatarPart {
         switch( this.rotation ) {
             case 0:
                 this.position.x = 2;
-                
                 break;
 
+            case 1:
+                this.position.x = 1;
+                this.position.y = -36;
+                break;
             case 3:
                 this.position.x = 0;
+   
                 
                 break;
             case 4:

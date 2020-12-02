@@ -195,7 +195,7 @@ export default class RoomGraphics {
             ctx.translate(0, 1);
      
             ctx.strokeStyle = '#70727a';
-            ctx.fillStyle = '#70727a';
+            ctx.fillStyle = '#6F717A';
             ctx.beginPath();
             ctx.moveTo(points[0].x - 1, points[0].y);
             ctx.lineTo(points[1].x - 1, points[1].y);
@@ -282,7 +282,7 @@ export default class RoomGraphics {
             ctx.save();
             ctx.translate(0, 1);
             ctx.strokeStyle = '#70727a';
-            ctx.fillStyle = '#70727a';
+            ctx.fillStyle = '#6f717a';
             ctx.beginPath();
             ctx.moveTo(points[0].x, points[0].y);
             ctx.lineTo(points[1].x, points[1].y);
