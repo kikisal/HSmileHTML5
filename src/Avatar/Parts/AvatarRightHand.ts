@@ -23,7 +23,7 @@ export default class AvatarRightHand extends AvatarPart {
         switch( this.rotation ) {
             case 0:
                 this.position.x = 10;
-                this.position.y = -6;
+                this.position.y = -5;
                 break;
 
             case 1:

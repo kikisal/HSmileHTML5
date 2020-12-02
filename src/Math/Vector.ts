@@ -13,6 +13,7 @@ export default class Vector {
         this.z = z ? z : 0;
     }
 
+
     set(x: number, y: number, z?: number) {
         this.x = x;
         this.y = y;

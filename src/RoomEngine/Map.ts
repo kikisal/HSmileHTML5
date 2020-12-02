@@ -4,6 +4,7 @@ import Vector from '../Math/Vector';
 import RoomGraphics from '../RoomGraphics/RoomGraphics';
 import { Room } from './Room';
 import INDEX_ORDERS from './IndexOrders';
+import Transform from '../Math/Transform';
 
 export class Map {
 
@@ -32,7 +33,7 @@ export class Map {
         const app = HSmile.get().app!;
 
         this.room.root_stage.position.x = window.innerWidth / 2;
-        this.room.root_stage.position.y = window.innerHeight / 2;
+        this.room.root_stage.position.y = Math.floor(965/2);
 
         this.mapStage = new PIXI.Container();
         this.mapStage.sortableChildren = true;
@@ -73,7 +74,7 @@ export class Map {
 
         
         this.generateFloor();
-       // this.generateWalls();
+        this.generateWalls();
       //  this.generateDoor();
  
      //  this.generateStairRight();
@@ -166,13 +167,9 @@ export class Map {
             for( let x = 0; x < model.size.x; ++x ) {
                 const tileIndex = model.heightMap[y][x];
              
-
       
                 if ( tileIndex === 0 ) // skip holes.
-                    continue;
-
-                    
-               
+                    continue;               
 
                 if ( model.validTile(x, y - 1) && Math.abs(tileIndex - model.heightMap[y - 1][x]) === 1 ) {
                   
@@ -192,7 +189,7 @@ export class Map {
         }
     }
 
-    discrete(position: Vector): Vector {
+    static discrete(position: Vector): Vector {
         return new Vector(
             position.x * Map.CELL_WIDTH,
             position.y * Map.CELL_HEIGHT,
@@ -219,17 +216,7 @@ export class Map {
             this.mapStage.removeChild(this.mapStage.children[i]);    
     }
 
-    /**
-     * 
-     * @param point point to be transformed 
-     */
-    toIso(point: Vector): Vector {
-        return new Vector( 
-            (point.x - point.y),
-            (point.x + point.y),
-            -point.z
-        );
-    }
+ 
 
 
     /**
@@ -241,8 +228,8 @@ export class Map {
         const wallSprite = 
             new PIXI.Sprite(RoomGraphics.makeRightWall((Map.WALL_HEIGHT_OFFSET + (Map.WALL_Z_FACTOR * wallHeight)), thickess, mustDrawRight));
 
-        const stagePosition = this.discrete(
-            this.toIso(new Vector(
+        const stagePosition = Map.discrete(
+            Transform.toIso(new Vector(
                 position.x,
                 position.y,
                 position.z
@@ -278,8 +265,8 @@ export class Map {
         new PIXI.Sprite(RoomGraphics.makeLeftWall((Map.WALL_HEIGHT_OFFSET + (Map.WALL_Z_FACTOR * wallHeight)), thickess, mustDrawRight));
 
         
-        const stagePosition = this.discrete(
-            this.toIso(new Vector(
+        const stagePosition = Map.discrete(
+            Transform.toIso(new Vector(
                 position.x,
                 position.y,
                 position.z
@@ -310,8 +297,8 @@ export class Map {
        const tileSprite = new PIXI.Sprite(RoomGraphics.makeRightStair(toSkip));
        tileSprite.anchor.set(0, 1);
        
-       const stagePosition = this.discrete(
-           this.toIso(new Vector(position.x, position.y, position.z))
+       const stagePosition = Map.discrete(
+           Transform.toIso(new Vector(position.x, position.y, position.z))
        );
 
        tileSprite.x = stagePosition.x - 8;
@@ -332,8 +319,8 @@ export class Map {
        const tileSprite = new PIXI.Sprite(RoomGraphics.makeLeftStair());
        tileSprite.anchor.set(0, 1);
        
-       const stagePosition = this.discrete(
-           this.toIso(new Vector(position.x, position.y, position.z))
+       const stagePosition = Map.discrete(
+           Transform.toIso(new Vector(position.x, position.y, position.z))
        );
 
        tileSprite.x = stagePosition.x;
@@ -349,26 +336,26 @@ export class Map {
     renderTile(stage: PIXI.Container, position: Vector) {
 
         // size: number, 
-       //  height: number = 9, topColor: number = 0x989865, leftColor: number = 0x767643, rightColor: number = 0x545421
-            const app = HSmile.get().app!;
+        // height: number = 9, topColor: number = 0x989865, leftColor: number = 0x767643, rightColor: number = 0x545421
+        const app = HSmile.get()!;
 
-            let sheet = app.loader.resources['room_tiles'].spritesheet;
-            
-            const tileSprite = new PIXI.Sprite(sheet?.textures["normal.png"]);
-            tileSprite.anchor.set(0, 1);
-            
-            const stagePosition = this.discrete(
-                this.toIso(new Vector(position.x, position.y, position.z))
-            );
+        
+        const tileSprite = new PIXI.Sprite(app.getResourceImageManager().get('room_tiles')!.getTexture('normal.png'));
+        tileSprite.anchor.set(0, 1);
+        
+        const stagePosition = Map.discrete(
+            Transform.toIso(new Vector(position.x, position.y, position.z))
+        );
 
-            tileSprite.x = stagePosition.x;
-            tileSprite.y = stagePosition.y + stagePosition.z;
+        tileSprite.x = stagePosition.x;
+        tileSprite.y = stagePosition.y + stagePosition.z;
 
-            tileSprite.tint = 0x989865;
-            tileSprite.zIndex = INDEX_ORDERS.FLOOR_ORDER;
+        tileSprite.tint = 0x989865;
+        
+        tileSprite.zIndex = INDEX_ORDERS.FLOOR_ORDER;
 
 
-            stage.addChild(tileSprite);
-      }
+        stage.addChild(tileSprite);
+    }
 
 }

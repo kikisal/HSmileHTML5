@@ -1,7 +1,9 @@
 import * as PIXI from 'pixi.js';
 import { HSmile } from '../HSmileMain';
+
 import Vector from '../Math/Vector';
 import { ImageResource } from '../Resource/ResourceManagerImage';
+import { Map } from '../RoomEngine/Map';
 import { AnimationStates, AvatarParts, AvatarRotations } from "./AvatarTypes";
 import { HS_HUMAN_BODY, H } from './GlobalTexts';
 import IAvatarPart from "./IAvatarPart";
@@ -15,6 +17,8 @@ type HSmileSprite = {
 export default class AvatarPart implements IAvatarPart {
     
     stage: PIXI.Container;
+    
+    alpha: number = 1;
 
     zIndex: number = 0;
 
@@ -78,13 +82,13 @@ export default class AvatarPart implements IAvatarPart {
         this.sprite.scale.x = this.flip ? -1 : 1;
         this.sprite.position.x = this.position.x + offset.x;
         this.sprite.position.y = this.position.y + offset.y;
-    
 
         this.sprite.anchor.set(0.5);
         // offset array positions
         //this.sprite.position.set(this.offsetArray[this.getSpriteString()].x, this.offsetArray[this.getSpriteString()].y);
         
         this.sprite.tint = this.tint || 0xFFFFFF;
+        this.sprite.alpha = this.alpha;
 
         // app.loader.resources[HS_HUMAN_BODY].textures![this.getSpriteString()];
         
@@ -106,10 +110,13 @@ export default class AvatarPart implements IAvatarPart {
 
         this.sprite.texture = app.getResourceImageManager().get(HS_HUMAN_BODY)!.getTexture(this.getSpriteString())!;   
         this.sprite.scale.x = this.flip ? -1 : 1;
+
+      
         this.sprite.position.x = this.position.x + (!this.flip ? offset.x : offset.flip.x);
         this.sprite.position.y = this.position.y + (!this.flip ? offset.y : offset.flip.y);
         this.sprite.zIndex = this.zIndex;
         this.sprite.tint = this.tint || 0xFFFFFF;
+        this.sprite.alpha = this.alpha;
     }
 
     update(): void {

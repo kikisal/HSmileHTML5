@@ -24,28 +24,15 @@ export class Room {
         this.map = new Map(this);
 
         // generate map
-        //this.map.generate();
+        this.map.generate();
+
         const app = HSmile.get().app!;
 
-        this.avatarComposer = new AvatarComposer(this.root_stage);
-        this.avatarComposer.tint = 0xE4B799;
-        this.avatarComposer.rotation = 0;
-        
-        
+        this.avatarComposer = new AvatarComposer(this.map.mapStage);
 
-        /*
-        this.avatarComposer.tint = 0xE4B799;
-        this.avatarComposer.rotation = 0;
-        this.avatarComposer.animationState = 'std';*/
+        this.avatarComposer.position.x = 0;
+        this.avatarComposer.position.y = 0;
         
-        setInterval(() => {
-            this.avatarComposer!.rotation += 1;
-            if( this.avatarComposer!.rotation > 7 )
-                this.avatarComposer!.rotation = 0;
-        }, 1000);
-        
-
-        // this.avatarComposer.draw();
 
 
     }
@@ -55,7 +42,6 @@ export class Room {
     }
     
     draw(): void {
-        
         this.avatarComposer!.draw();
     }
 }

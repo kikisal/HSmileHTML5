@@ -24,7 +24,7 @@ export default class AvatarLeftHand extends AvatarPart {
             case 0:
                 this.zIndex = -1;
                 this.position.x = -13;
-                this.position.y = -10;
+                this.position.y = -9;
                 break;
 
             case 1:

@@ -120,7 +120,7 @@ export class HSmile {
                 {
                     width: window.innerWidth,
                     height: window.innerHeight,
-                    backgroundColor: 0xECEAE0,
+                    backgroundColor: 0x000000,
                     antialias: false,
                     autoDensity: true,
                     resolution: window.devicePixelRatio || 1,

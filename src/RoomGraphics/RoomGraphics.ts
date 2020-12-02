@@ -3,6 +3,32 @@ import { HSmile } from '../HSmileMain';
 
 export default class RoomGraphics {
 
+        
+
+    static setPixel(imgData: any, width: number, x: number, y: number) {
+        const n = (y * width + x)*4;
+
+        imgData[n]=255;
+        imgData[n+1]=0;
+        imgData[n+2]=0;
+        imgData[n+3]=255;
+    }
+
+    // Refer to: http://rosettacode.org/wiki/Bitmap/Bresenham's_line_algorithm#JavaScript
+    static bline(canvas: HTMLCanvasElement, imgData: any, x0: number, y0: number, x1: number, y1: number) {
+        const dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+        const dy = Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1; 
+        var err = (dx>dy ? dx : -dy)/2;        
+        while (true) {
+            
+            RoomGraphics.setPixel(imgData, canvas.width, x0, y0);
+
+            if (x0 === x1 && y0 === y1) break;
+            var e2 = err;
+            if (e2 > -dx) { err -= dy; x0 += sx; }
+            if (e2 < dy) { err += dx; y0 += sy; }
+        }
+    }
 
     static flipImage(img: HTMLCanvasElement | HTMLImageElement): HTMLCanvasElement | null {
         let element = document.createElement('canvas');
@@ -30,9 +56,12 @@ export default class RoomGraphics {
         tempCanvas.width = 99;
         tempCanvas.height = 88;
 
+  
+
         if (ctx != null) {
 
-        
+    
+    
 
             const stairPoints = [
                 {
@@ -139,6 +168,9 @@ export default class RoomGraphics {
         
 
         if (ctx != null) {
+            
+            const imgData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+            const data = imgData.data;
 
             const points = [
                 {
@@ -161,6 +193,7 @@ export default class RoomGraphics {
 
             ctx.save();
             ctx.translate(0, 1);
+     
             ctx.strokeStyle = '#70727a';
             ctx.fillStyle = '#70727a';
             ctx.beginPath();
@@ -171,6 +204,7 @@ export default class RoomGraphics {
             ctx.lineTo(points[0].x - 1, points[0].y);
             ctx.closePath();
             ctx.stroke();
+            
             ctx.fill();
 
 

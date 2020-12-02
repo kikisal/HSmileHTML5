@@ -31,6 +31,7 @@ export default class AvatarHead extends AvatarPart {
 
             case 3:
                 this.position.x = 0;
+                
                 break;
             case 4:
                 this.position.y = -34;
