@@ -1,9 +1,11 @@
+import PacketManager from "./Communication/PacketManager";
 import ServerMessage from "./Messages/ServerMessage";
 
 export default class SocketManager {
     
     socket?: WebSocket;
     host: string;
+    packetManager: PacketManager = new PacketManager;
     
     constructor(host: string) {
         this.host = host;
@@ -12,6 +14,8 @@ export default class SocketManager {
     init() {
         this.socket = new WebSocket(this.host);
         this.socket.binaryType = 'arraybuffer';
+
+
         
         this.socket.addEventListener('open', this.onOpen.bind(this));
         this.socket.addEventListener('message', this.onMessage.bind(this));
@@ -33,6 +37,7 @@ export default class SocketManager {
         console.log(new Int8Array(data));
 
         const serverMessage = new ServerMessage(data);
+        
         
     }
 
