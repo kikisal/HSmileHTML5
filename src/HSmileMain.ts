@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { DOM } from './DOM/Utility';
+import SocketManager from './Net/SocketManager';
 import ImageJsonParser from './Resource/parser/ImageJsonParser';
 import ResourceParser from './Resource/parser/ResourceParser';
 
@@ -25,11 +26,13 @@ export class HSmile {
 
     private room: Room | undefined;
     private resourceImageManager: ResourceManagerImage<HTMLImageElement>;
+    socketManager: SocketManager;
 
     constructor() {
         this.resourceImageManager = new ResourceManagerImage(new ImageJsonParser());
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
         window.addEventListener('resize', this.resize.bind(this));
+        this.socketManager = new SocketManager("ws://localhost:30000/");
     }
 
     resize() {
@@ -60,18 +63,24 @@ export class HSmile {
 
     onResourceLoaded(e: any): void {
         const app = this.app!;
+
+
+        
         // HSMile risorse hs_human_body + suoni caricate
-        // ora stabilisci connessione con emu... [DA FARE]
+        // ora stabilisci connessione con emu... 
+
+
+        this.socketManager.init();
 
         // ...
         // ... emu connections, start receiveing events from it
 
 
-        this.room = new Room(app.stage, RoomModel.default13x8());
+        //this.room = new Room(app.stage, RoomModel.default13x8());
 
         
         // game loop
-        app.ticker.add(this.gameLoop.bind(this));
+        // app.ticker.add(this.gameLoop.bind(this));
 
     }   
 

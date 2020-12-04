@@ -34,7 +34,6 @@ export class Room {
         this.avatarComposer.position.y = 0;
         
 
-
     }
 
     update(): void {
