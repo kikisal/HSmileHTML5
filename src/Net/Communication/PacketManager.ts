@@ -9,6 +9,13 @@ import NavigatorSettingsMessageEvent from "./Packets/Navigator/NavigatorSettings
 import FigureSetIdsMessageEvent from "./Packets/Inventory/AvatarEffects/FigureSetIdsMessageEvent";
 import UserRightsMessageEvent from "./Packets/Handshake/UserRightsMessageEvent";
 import AvailabilityStatusMessageEvent from "./Packets/Handshake/AvailabilityStatusMessageEvent";
+import AchievementScoreMessageEvent from "./Packets/Inventory/Achievements/AchievementScoreMessageEvent";
+import HabboClubSubscriptionMessageEvent from "./Packets/Users/HabboClubSubscriptionMessageEvent";
+import BuildersClubMembershipMessageEvent from "./Packets/BuildersClub/BuildersClubMembershipMessageEvent";
+import CfhTopicsInitMessageEvent from "./Packets/Moderation/CfhTopicsInitMessageEvent";
+import BadgeDefinitionsMessageEvent from "./Packets/Inventory/Achievements/BadgeDefinitionsMessageEvent";
+import SoundSettingsMessageEvent from "./Packets/Sound/SoundSettingsMessageEvent";
+import NuxAlertMessageEvent from "./Packets/LandingView/NuxAlertMessageEvent";
 
 type PacketMap = {
     id: number;
@@ -27,12 +34,26 @@ export default class PacketManager {
         this.registerHandshakePackets();
         this.registerInventory();
         this.registerNavigator();
+
+        this.registerUsers();
+        this.registerBuildersClub();
+        this.registerModeration();
+        this.registerSound();
+        this.registerLandingView();
     }
 
-    registerPacket(id: number, packetEvent: IPacketEvent): void {
-        this.packetList.push({id: id, packetEvent: packetEvent});
+    registerLandingView(): void {
+        this.registerPacket(Incoming.NuxAlertMessageComposer, new NuxAlertMessageEvent());
     }
 
+    registerSound(): void {
+        this.registerPacket(Incoming.SoundSettingsMessageComposer, new SoundSettingsMessageEvent());
+    }
+
+    registerModeration(): void {
+        this.registerPacket(Incoming.CfhTopicsInitMessageComposer, new CfhTopicsInitMessageEvent());
+    }
+    
     registerNavigator(): void {
         this.registerPacket(Incoming.NavigatorSettingsMessageComposer, new NavigatorSettingsMessageEvent());
         this.registerPacket(Incoming.FavouritesMessageComposer, new FavouritesMessageEvent());
@@ -48,6 +69,17 @@ export default class PacketManager {
     registerInventory(): void {
         this.registerPacket(Incoming.AvatarEffectsMessageComposer, new AvatarEffectsMessageEvent());
         this.registerPacket(Incoming.FigureSetIdsMessageComposer, new FigureSetIdsMessageEvent());
+        this.registerPacket(Incoming.AchievementScoreMessageComposer, new AchievementScoreMessageEvent());
+        this.registerPacket(Incoming.BadgeDefinitionsMessageComposer, new BadgeDefinitionsMessageEvent());
+    }
+
+    registerUsers(): void {
+       // same packet id number as BuildersClubMembershipMessageComposer
+       // this.registerPacket(Incoming.HabboClubSubscriptionComposer, new HabboClubSubscriptionMessageEvent());
+    }
+
+    registerBuildersClub(): void {
+        this.registerPacket(Incoming.BuildersClubMembershipMessageComposer, new BuildersClubMembershipMessageEvent());    
     }
 
     getPacket(id: number): IPacketEvent | null {
@@ -69,5 +101,10 @@ export default class PacketManager {
         }
 
         packet.Parse(serverMessage);        
+    }
+
+    
+    registerPacket(id: number, packetEvent: IPacketEvent): void {
+        this.packetList.push({id: id, packetEvent: packetEvent});
     }
 }
