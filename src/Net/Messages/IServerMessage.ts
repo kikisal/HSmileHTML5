@@ -13,12 +13,12 @@ export default interface IServerMessage {
     popDouble(): number;
 
     /**
-     * @returns number short 32 bit
+     * @returns number short 16 bit
      */
     popShort(): number;
 
     /**
-     * @returns 1 byte true or false
+     * @returns 8 bit true or false
      */
     popBoolean(): boolean;
 }

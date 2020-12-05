@@ -1,5 +1,8 @@
 import * as PIXI from 'pixi.js';
 import { DOM } from './DOM/Utility';
+import Outcoming from './Net/Communication/Events/Outcoming';
+import ConnectionHandler from './Net/Handler/ConnectionHandler';
+import ClientMessage from './Net/Messages/ClientMessage';
 import SocketManager from './Net/SocketManager';
 import ImageJsonParser from './Resource/parser/ImageJsonParser';
 import ResourceParser from './Resource/parser/ResourceParser';
@@ -32,7 +35,9 @@ export class HSmile {
         this.resourceImageManager = new ResourceManagerImage(new ImageJsonParser());
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
         window.addEventListener('resize', this.resize.bind(this));
+
         this.socketManager = new SocketManager("ws://localhost:30000/");
+        this.socketManager.setCallBack(new ConnectionHandler());
     }
 
     resize() {
@@ -64,13 +69,15 @@ export class HSmile {
     onResourceLoaded(e: any): void {
         const app = this.app!;
 
-
+        
         
         // HSMile risorse hs_human_body + suoni caricate
         // ora stabilisci connessione con emu... 
 
 
         this.socketManager.init();
+
+        
 
         // ...
         // ... emu connections, start receiveing events from it

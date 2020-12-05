@@ -1,4 +1,7 @@
+import Outcoming from "./Communication/Events/Outcoming";
 import PacketManager from "./Communication/PacketManager";
+import IConnectionHandler from "./IConnectionHandler";
+import ClientMessage from "./Messages/ClientMessage";
 import ServerMessage from "./Messages/ServerMessage";
 
 export default class SocketManager {
@@ -6,6 +9,7 @@ export default class SocketManager {
     socket?: WebSocket;
     host: string;
     packetManager: PacketManager = new PacketManager;
+    handler?: IConnectionHandler;
     
     constructor(host: string) {
         this.host = host;
@@ -22,26 +26,32 @@ export default class SocketManager {
         this.socket.addEventListener('close', this.onClose.bind(this));
     }
 
+    setCallBack(handler: IConnectionHandler): void {
+        this.handler = handler;
+    }
+
     onOpen(e: any): void {
-        console.log('ws conn opened');
-        setTimeout(() => {
-            this.socket?.send("a");
-        }, 1000);
+        this.handler?.onConnect(e);
     }
 
     onMessage(e: any): void {
         const data = e.data;
+
         if ( !(data instanceof ArrayBuffer) )
             return;
 
-        console.log(new Int8Array(data));
+        // console.log(new Int8Array(data));
 
         const serverMessage = new ServerMessage(data);
-        
-        
+        this.packetManager.execute(serverMessage.packetId, serverMessage);
     }
 
     onClose(e: any): void {
-        console.log('connection closed.');
+        if ( e.code === 1006 )
+            this.init(); // re load client.
+    }
+
+    Send( clientMessage: ClientMessage ): void {
+        this.socket?.send(clientMessage.getBuffer());
     }
 }

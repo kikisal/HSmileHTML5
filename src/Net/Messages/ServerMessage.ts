@@ -29,9 +29,8 @@ export default class ServerMessage implements IServerMessage {
     popString(): string {
         const strLen = this.popShort();
         let str = '';
-        for ( let i = 0; i < strLen; ++i ) {
+        for ( let i = 0; i < strLen; ++i )
             str += String.fromCharCode(this.popByte());
-        }
 
         return str;
     }
