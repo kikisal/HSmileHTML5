@@ -1,3 +1,4 @@
+import SocketManager from "../SocketManager";
 import IServerMessage from "./IServerMessage";
 
 export default class ServerMessage implements IServerMessage {
@@ -16,15 +17,19 @@ export default class ServerMessage implements IServerMessage {
     constructor( data: ArrayBuffer ) {
         this.data = data;
         this.dataView = new DataView(data);
+
         this.sizePacket = this.popInt();
         this.packetId = this.popShort();
+
     }
+
 
     popInt(): number {
         const r = this.dataView.getInt32(this.offset);
         this.offset += Int32Array.BYTES_PER_ELEMENT;
         return r;
     }
+
 
     popString(): string {
         const strLen = this.popShort();

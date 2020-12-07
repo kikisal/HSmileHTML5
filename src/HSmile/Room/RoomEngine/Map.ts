@@ -1,10 +1,10 @@
 import * as PIXI from 'pixi.js';
-import { HSmile } from '../HSmileMain';
-import Vector from '../Math/Vector';
-import RoomGraphics from '../RoomGraphics/RoomGraphics';
-import { Room } from './Room';
+import { HSmile } from '../../../HSmileMain';
+import Vector from '../../../Math/Vector';
+import RoomGraphics from './../RoomGraphics/RoomGraphics';
+import { Room } from '../Room';
 import INDEX_ORDERS from './IndexOrders';
-import Transform from '../Math/Transform';
+import Transform from '../../../Math/Transform';
 
 export class Map {
 

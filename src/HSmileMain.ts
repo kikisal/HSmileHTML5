@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { DOM } from './DOM/Utility';
+import Game from './Game';
 import Outcoming from './Net/Communication/Events/Outcoming';
 import ConnectionHandler from './Net/Handler/ConnectionHandler';
 import ClientMessage from './Net/Messages/ClientMessage';
@@ -8,8 +9,8 @@ import ImageJsonParser from './Resource/parser/ImageJsonParser';
 import ResourceParser from './Resource/parser/ResourceParser';
 
 import ResourceManagerImage, { ImageResource } from './Resource/ResourceManagerImage';
-import { Room } from './RoomEngine/Room';
-import RoomModel from './RoomEngine/RoomModel';
+import { Room } from './HSmile/Room/Room';
+import RoomModel from './HSmile/Room/RoomEngine/RoomModel';
 
 type MousePosition = {
     x?: number;
@@ -22,20 +23,26 @@ export class HSmile {
     // from a client call ran into a browser.
 
     app: PIXI.Application | undefined;
-    
-    private static instance: HSmile | undefined;
+
     keys: object = {};
     static mouse: MousePosition = {down: false};
+    
+    private static instance: HSmile | undefined;
 
-    private room: Room | undefined;
-    private resourceImageManager: ResourceManagerImage<HTMLImageElement>;
+
+    resourceImageManager: ResourceManagerImage<HTMLImageElement>;
     socketManager: SocketManager;
+    game: Game;
+
+
+
 
     constructor() {
         this.resourceImageManager = new ResourceManagerImage(new ImageJsonParser());
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
         window.addEventListener('resize', this.resize.bind(this));
 
+        this.game = new Game();
         this.socketManager = new SocketManager("ws://localhost:30000/");
         this.socketManager.setCallBack(new ConnectionHandler());
     }
@@ -87,7 +94,7 @@ export class HSmile {
 
         
         // game loop
-        // app.ticker.add(this.gameLoop.bind(this));
+        app.ticker.add(this.gameLoop.bind(this));
 
     }   
 
@@ -96,8 +103,7 @@ export class HSmile {
     }
 
     gameLoop(): void {
-        this.room?.update();
-        this.room?.draw();
+       this.game.gameLoop();
     }
 
     eventsInit(): void {

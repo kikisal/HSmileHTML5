@@ -16,6 +16,9 @@ import CfhTopicsInitMessageEvent from "./Packets/Moderation/CfhTopicsInitMessage
 import BadgeDefinitionsMessageEvent from "./Packets/Inventory/Achievements/BadgeDefinitionsMessageEvent";
 import SoundSettingsMessageEvent from "./Packets/Sound/SoundSettingsMessageEvent";
 import NuxAlertMessageEvent from "./Packets/LandingView/NuxAlertMessageEvent";
+import AchievementProgressedMessageEvent from "./Packets/Inventory/Achievements/AchievementProgressedMessageEvent";
+import CloseConnectionMessageEvent from "./Packets/Rooms/Session/CloseConnectionMessageEvent";
+import OpenConnectionMessageEvent from "./Packets/Rooms/Session/OpenConnectionMessageEvent";
 
 type PacketMap = {
     id: number;
@@ -40,6 +43,13 @@ export default class PacketManager {
         this.registerModeration();
         this.registerSound();
         this.registerLandingView();
+        this.registerRoom();
+    }
+
+    registerRoom(): void {
+        this.registerPacket(Incoming.OpenConnectionMessageComposer, new OpenConnectionMessageEvent());
+        this.registerPacket(Incoming.CloseConnectionMessageComposer, new CloseConnectionMessageEvent());
+
     }
 
     registerLandingView(): void {
@@ -71,6 +81,7 @@ export default class PacketManager {
         this.registerPacket(Incoming.FigureSetIdsMessageComposer, new FigureSetIdsMessageEvent());
         this.registerPacket(Incoming.AchievementScoreMessageComposer, new AchievementScoreMessageEvent());
         this.registerPacket(Incoming.BadgeDefinitionsMessageComposer, new BadgeDefinitionsMessageEvent());
+        this.registerPacket(Incoming.AchievementProgressedMessageComposer, new AchievementProgressedMessageEvent());
     }
 
     registerUsers(): void {

@@ -4,12 +4,94 @@ import IConnectionHandler from "./IConnectionHandler";
 import ClientMessage from "./Messages/ClientMessage";
 import ServerMessage from "./Messages/ServerMessage";
 
+
+class DataHolder {
+    packetId: number;
+
+    static readonly HEADER_OFFSET: number = 6;
+
+    packetManager: PacketManager;
+
+
+    completed = false;
+    // buffer[0] must contain body size and packetyId
+    bodyBuffer: ArrayBuffer[] = [];
+
+    firstPacket: boolean = true;
+
+    fullDataSize: number = 0; // body data size.
+    currentDataLoaded: number = 0;
+
+    constructor(packetId: number, packetManager: PacketManager) {
+        this.packetId = packetId;
+        this.packetManager = packetManager;
+    }
+
+    // buffer.slice(6);
+    handle(buffer: ArrayBuffer): void {
+        const dataView = new DataView(buffer);
+        
+        if ( this.firstPacket )
+        {
+            this.fullDataSize = dataView.getInt32(0) - 2;
+            this.firstPacket = false;
+        } else {
+            const bodySize = dataView.getInt32(0) - 2;
+        
+            if ( bodySize === 0 ) {
+                this.completed = true;
+                // end packet.
+                const exportedBuffer = this.exportBuffer();
+                console.log(exportedBuffer.byteLength);
+
+                this.packetManager.execute(this.packetId, new ServerMessage(exportedBuffer));
+            } else {
+                
+                console.log('there is data: ', buffer);
+                this.bodyBuffer.push(buffer.slice(DataHolder.HEADER_OFFSET));
+            }
+        }
+
+    }
+
+    isCompleted(): boolean {
+        return this.completed;
+    }
+
+    exportBuffer(): ArrayBuffer {
+        const buffer = new ArrayBuffer(this.fullDataSize + DataHolder.HEADER_OFFSET);
+        const dataView = new DataView(buffer);
+
+        dataView.setInt32(0, this.fullDataSize);
+        dataView.setInt16(Int32Array.BYTES_PER_ELEMENT, this.packetId);
+
+        for ( let i = 0; i < this.bodyBuffer.length; ++i ) {
+            const bodyBuffer = new DataView(this.bodyBuffer[i]);
+            for ( let j = 0; j < bodyBuffer.byteLength; ++j ) {
+                dataView.setInt8(DataHolder.HEADER_OFFSET + i, bodyBuffer.getInt8(i));
+            }
+        }
+
+        this.bodyBuffer = [];
+
+        return buffer;
+    }
+
+}
+
 export default class SocketManager {
     
     socket?: WebSocket;
     host: string;
     packetManager: PacketManager = new PacketManager;
+    
+    static readonly BODY_SIZE_TRESHOLD = 10000;
+    
     handler?: IConnectionHandler;
+
+    // For more data from server
+    pendingServerMessages: DataHolder[] = [];
+    
     
     constructor(host: string) {
         this.host = host;
@@ -42,9 +124,54 @@ export default class SocketManager {
 
         // console.log(new Int8Array(data));
 
-        const serverMessage = new ServerMessage(data);
-        this.packetManager.execute(serverMessage.packetId, serverMessage);
+        // this method should work synchronized.
+        
+        this.managePacket(data);
     }
+
+    /*
+        [body-size]
+        [packetId]
+
+        [body-size]
+        [packet-id]
+        [...body-content...]
+        [0]
+        [packet-id]
+    */
+    managePacket(data: ArrayBuffer): void {
+        const dataView = new DataView(data);
+        const packetId = dataView.getInt16(Int32Array.BYTES_PER_ELEMENT);
+
+        const packetHandling = this.getPending(packetId);
+
+
+        if ( packetHandling ) {
+            packetHandling.handle(data);
+
+            if ( packetHandling.isCompleted() )
+                this.pendingServerMessages.splice(this.pendingServerMessages.indexOf(packetHandling), 1);
+
+        } else {
+            const dataHolder = new DataHolder(packetId, this.packetManager);
+
+            this.pendingServerMessages.push( dataHolder );
+            dataHolder.handle(data);
+        }
+
+        
+    }
+
+    getPending(packetId: number): DataHolder | null {
+        for ( let i = 0; i < this.pendingServerMessages.length; ++i ) {
+            if ( this.pendingServerMessages[i].packetId === packetId )
+                return this.pendingServerMessages[i];
+        }
+
+        return null;
+    }
+
+    
 
     onClose(e: any): void {
         if ( e.code === 1006 )

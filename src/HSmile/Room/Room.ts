@@ -1,14 +1,9 @@
 import { Container } from "pixi.js";
-import { Map } from "./Map";
-import RoomModel from "./RoomModel";
+import { Map } from "./RoomEngine/Map";
+import RoomModel from "./RoomEngine/RoomModel";
 import * as PIXI from 'pixi.js';
-import { HSmile } from "../HSmileMain";
-import AvatarPart from "../Avatar/AvatarPart";
-import AvatarHead from "../Avatar/Parts/AvatarHead";
-import AvatarBody from "../Avatar/Parts/AvatarBody";
-import AvatarLeftHand from "../Avatar/Parts/AvatarLeftHand";
-import AvatarRightHand from "../Avatar/Parts/AvatarRightHand";
-import AvatarComposer from "../Avatar/AvatarComposer";
+import { HSmile } from "../../HSmileMain";
+import AvatarComposer from "../../Avatar/AvatarComposer";
 
 
 export class Room {
