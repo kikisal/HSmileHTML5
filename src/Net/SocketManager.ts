@@ -1,4 +1,3 @@
-import Outcoming from "./Communication/Events/Outcoming";
 import PacketManager from "./Communication/PacketManager";
 import IConnectionHandler from "./IConnectionHandler";
 import ClientMessage from "./Messages/ClientMessage";
@@ -19,7 +18,7 @@ class DataHolder {
 
     firstPacket: boolean = true;
 
-    fullDataSize: number = 0; // body data size.
+    fullBodyDataSize: number = 0; // body data size.
     currentDataLoaded: number = 0;
 
     constructor(packetId: number, packetManager: PacketManager) {
@@ -33,21 +32,19 @@ class DataHolder {
         
         if ( this.firstPacket )
         {
-            this.fullDataSize = dataView.getInt32(0) - 2;
+            this.fullBodyDataSize = dataView.getInt32(0) - 2;
             this.firstPacket = false;
         } else {
             const bodySize = dataView.getInt32(0) - 2;
-        
+       
             if ( bodySize === 0 ) {
                 this.completed = true;
                 // end packet.
                 const exportedBuffer = this.exportBuffer();
-                console.log(exportedBuffer.byteLength);
+
 
                 this.packetManager.execute(this.packetId, new ServerMessage(exportedBuffer));
             } else {
-                
-                console.log('there is data: ', buffer);
                 this.bodyBuffer.push(buffer.slice(DataHolder.HEADER_OFFSET));
             }
         }
@@ -59,22 +56,30 @@ class DataHolder {
     }
 
     exportBuffer(): ArrayBuffer {
-        const buffer = new ArrayBuffer(this.fullDataSize + DataHolder.HEADER_OFFSET);
+        const buffer = new ArrayBuffer(this.fullBodyDataSize + DataHolder.HEADER_OFFSET);
         const dataView = new DataView(buffer);
 
-        dataView.setInt32(0, this.fullDataSize);
+        let offset = DataHolder.HEADER_OFFSET;
+
+        dataView.setInt32(0, this.fullBodyDataSize);
         dataView.setInt16(Int32Array.BYTES_PER_ELEMENT, this.packetId);
 
         for ( let i = 0; i < this.bodyBuffer.length; ++i ) {
             const bodyBuffer = new DataView(this.bodyBuffer[i]);
+
             for ( let j = 0; j < bodyBuffer.byteLength; ++j ) {
-                dataView.setInt8(DataHolder.HEADER_OFFSET + i, bodyBuffer.getInt8(i));
+                if ( offset + j >= buffer.byteLength )
+                    break;
+
+                dataView.setInt8(offset + j, bodyBuffer.getInt8(j));
             }
+
+            offset += bodyBuffer.byteLength;
         }
 
         this.bodyBuffer = [];
 
-        return buffer;
+        return dataView.buffer;
     }
 
 }
