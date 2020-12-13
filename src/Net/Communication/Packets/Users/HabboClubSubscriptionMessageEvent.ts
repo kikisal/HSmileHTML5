@@ -1,8 +1,10 @@
 import IServerMessage from "../../../Messages/IServerMessage";
+import Incoming from "../../Events/Incoming";
 import IPacketEvent from "../IPacketEvent";
 
 export default class HabboClubSubscriptionMessageEvent implements IPacketEvent {
     name = 'HabboClubSubscriptionMessageEvent';
+    packetId = Incoming.HabboClubSubscriptionComposer;
 
     Parse(serverPacket: IServerMessage): void {
         const subscription = serverPacket.popString(); // habbo_club

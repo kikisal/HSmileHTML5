@@ -10,7 +10,7 @@ import ResourceParser from './Resource/parser/ResourceParser';
 
 import ResourceManagerImage, { ImageResource } from './Resource/ResourceManagerImage';
 import { Room } from './HSmile/Room/Room';
-import RoomModel from './HSmile/Room/RoomEngine/RoomModel';
+import RoomModel from './HSmile/Room/RoomModel';
 
 type MousePosition = {
     x?: number;
@@ -40,10 +40,12 @@ export class HSmile {
     constructor() {
         this.resourceImageManager = new ResourceManagerImage(new ImageJsonParser());
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+        PIXI.settings.ROUND_PIXELS = false;
+
         window.addEventListener('resize', this.resize.bind(this));
 
-        this.game = new Game();
         this.socketManager = new SocketManager("ws://localhost:30000/");
+        this.game = new Game();
         this.socketManager.setCallBack(new ConnectionHandler());
     }
 
@@ -82,8 +84,8 @@ export class HSmile {
         // ora stabilisci connessione con emu... 
 
 
+        
         this.socketManager.init();
-
         
 
         // ...
@@ -173,7 +175,6 @@ export class HSmile {
                 }
             );    
 
-            
             viewOut.appendChild(app.view);
             
             const hsmile = HSmile.get();

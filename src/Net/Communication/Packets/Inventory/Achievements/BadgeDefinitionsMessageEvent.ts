@@ -1,8 +1,10 @@
 import IServerMessage from "../../../../Messages/IServerMessage";
+import Incoming from "../../../Events/Incoming";
 import IPacketEvent from "../../IPacketEvent";
 
 export default class BadgeDefinitionsMessageEvent implements IPacketEvent {
     name = 'BadgeDefinitionsMessageEvent';
+    packetId = Incoming.BadgeDefinitionsMessageComposer;
     
     Parse(serverPacket: IServerMessage): void {
         const achievements = serverPacket.popInt();

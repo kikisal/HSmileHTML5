@@ -1,8 +1,14 @@
 import IServerMessage from "../../../Messages/IServerMessage";
+import Incoming from "../../Events/Incoming";
 import IPacketEvent from "../IPacketEvent";
 
 export default class UserRightsMessageEvent implements IPacketEvent {
     name = 'UserRightsMessageEvent';
+    packetId = Incoming.UserRightsMessageComposer;
+
+    subscription?: number;
+    rank?: number;
+    ambassador?: boolean;
     
     Parse(serverPacket: IServerMessage): void {
         // is he (habbo_vip or habbo_club)
@@ -14,6 +20,10 @@ export default class UserRightsMessageEvent implements IPacketEvent {
 
         // ambassador boolean.
         const ambassador    = serverPacket.popBoolean();
+
+        this.subscription = subscription;
+        this.rank = rank;
+        this.ambassador = ambassador;
 
         console.log('user subscription: ', subscription);
         console.log('user rank: ', rank);

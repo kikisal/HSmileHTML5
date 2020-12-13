@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
 import Transform from '../Math/Transform';
 import Vector from '../Math/Vector';
-import IndexOrders from '../HSmile/Room/RoomEngine/IndexOrders';
-import { Map } from '../HSmile/Room/RoomEngine/Map';
+import IndexOrders from '../HSmile/Room/IndexOrders';
+import { Map } from '../HSmile/Room/Map';
 import IAvatarPart from './IAvatarPart';
 import AvatarBody from './Parts/AvatarBody';
 import AvatarHead from './Parts/AvatarHead';

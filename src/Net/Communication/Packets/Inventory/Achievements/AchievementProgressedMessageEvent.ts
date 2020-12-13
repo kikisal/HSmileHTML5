@@ -1,9 +1,11 @@
 import IServerMessage from "../../../../Messages/IServerMessage";
 import ServerMessage from "../../../../Messages/ServerMessage";
+import Incoming from "../../../Events/Incoming";
 import IPacketEvent from "../../IPacketEvent";
 
 export default class AchievementProgressedMessageEvent implements IPacketEvent {
     name: string = 'AchievementProgressedMessageEvent';
+    packetId = Incoming.AchievementProgressedMessageComposer;
     
     Parse(serverPacket: IServerMessage): void {
         /*

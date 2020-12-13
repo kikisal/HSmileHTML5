@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { HSmile } from '../../../HSmileMain';
+import { HSmile } from '../../HSmileMain';
 
 export default class RoomGraphics {
 

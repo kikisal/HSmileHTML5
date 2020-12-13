@@ -1,8 +1,10 @@
 import IServerMessage from "../../../../Messages/IServerMessage";
+import Incoming from "../../../Events/Incoming";
 import IPacketEvent from "../../IPacketEvent";
 
 export default class FigureSetIdsMessageEvent  implements IPacketEvent {
     name = 'FigureSetIdsMessageEvent';
+    packetId = Incoming.FigureSetIdsMessageComposer;
     
     Parse( serverPacket: IServerMessage ): void {
      

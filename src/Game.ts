@@ -1,14 +1,23 @@
-import RoomManager from "./HSmile/Room/RoomManager";
+import HSmileCommunication from "./HSmile/Communication/HSmileCommunication";
+import { Room } from "./HSmile/Room/Room";
+import { RoomEngine } from "./HSmile/Room/RoomEngine";
+import RoomModel from "./HSmile/Room/RoomModel";
 
 export default class Game {
 
-    roomManager: RoomManager;
+    hsmileCommunication?: HSmileCommunication;
+    roomEngine?: RoomEngine;
 
     constructor() {
-        this.roomManager = new RoomManager();
+       this.roomEngine = new RoomEngine();
+       this.hsmileCommunication = new HSmileCommunication();
+        
     }
 
-    gameLoop(): void {
 
+
+    gameLoop(): void {
+        
+        
     }
 }

@@ -17,13 +17,19 @@ import BadgeDefinitionsMessageEvent from "./Packets/Inventory/Achievements/Badge
 import SoundSettingsMessageEvent from "./Packets/Sound/SoundSettingsMessageEvent";
 import NuxAlertMessageEvent from "./Packets/LandingView/NuxAlertMessageEvent";
 import AchievementProgressedMessageEvent from "./Packets/Inventory/Achievements/AchievementProgressedMessageEvent";
-import CloseConnectionMessageEvent from "./Packets/Rooms/Session/CloseConnectionMessageEvent";
-import OpenConnectionMessageEvent from "./Packets/Rooms/Session/OpenConnectionMessageEvent";
+import CloseConnectionMessageEvent from "./Packets/Room/Session/CloseConnectionMessageEvent";
+import OpenConnectionMessageEvent from "./Packets/Room/Session/OpenConnectionMessageEvent";
+import RoomReadyMessageEvent from "./Packets/Room/Session/RoomReadyMessageEvent";
+import RoomPropertyMessageEvent from "./Packets/Room/Engine/RoomPropertyMessageEvent";
+import RoomRatingMessageEvent from "./Packets/Navigator/RoomRatingMessageEvent";
 
 type PacketMap = {
     id: number;
     packetEvent: IPacketEvent;
+    callback?: PacketCallback
 };
+
+type PacketCallback = (e: IPacketEvent) => void;
 
 export default class PacketManager {
 
@@ -34,7 +40,8 @@ export default class PacketManager {
     }
 
     initPackets(): void {
-        this.registerHandshakePackets();
+        /*
+       
         this.registerInventory();
         this.registerNavigator();
 
@@ -43,14 +50,10 @@ export default class PacketManager {
         this.registerModeration();
         this.registerSound();
         this.registerLandingView();
-        this.registerRoom();
+        */
     }
-
-    registerRoom(): void {
-        this.registerPacket(Incoming.OpenConnectionMessageComposer, new OpenConnectionMessageEvent());
-        this.registerPacket(Incoming.CloseConnectionMessageComposer, new CloseConnectionMessageEvent());
-
-    }
+/*
+ 
 
     registerLandingView(): void {
         this.registerPacket(Incoming.NuxAlertMessageComposer, new NuxAlertMessageEvent());
@@ -67,14 +70,9 @@ export default class PacketManager {
     registerNavigator(): void {
         this.registerPacket(Incoming.NavigatorSettingsMessageComposer, new NavigatorSettingsMessageEvent());
         this.registerPacket(Incoming.FavouritesMessageComposer, new FavouritesMessageEvent());
+        this.registerPacket(Incoming.RoomRatingMessageComposer, new RoomRatingMessageEvent());
     }
 
-    registerHandshakePackets(): void {
-        this.registerPacket(Incoming.AuthenticationOKMessageComposer, new AuthenticationOKMessageEvent());
-        this.registerPacket(Incoming.PongMessageComposer, new PongMessage());
-        this.registerPacket(Incoming.UserRightsMessageComposer, new UserRightsMessageEvent());
-        this.registerPacket(Incoming.AvailabilityStatusMessageComposer, new AvailabilityStatusMessageEvent());
-    }
 
     registerInventory(): void {
         this.registerPacket(Incoming.AvatarEffectsMessageComposer, new AvatarEffectsMessageEvent());
@@ -92,11 +90,15 @@ export default class PacketManager {
     registerBuildersClub(): void {
         this.registerPacket(Incoming.BuildersClubMembershipMessageComposer, new BuildersClubMembershipMessageEvent());    
     }
+*/
+    addMessageEvent(packetId: IPacketEvent, callback: PacketCallback): void {
+        this.registerPacket(packetId, callback);
+    }
 
-    getPacket(id: number): IPacketEvent | null {
+    getPacket(id: number): PacketMap | null {
         for ( let i = 0; i < this.packetList.length; ++i ) {
             if ( this.packetList[i].id === id )
-                return this.packetList[i].packetEvent;
+                return this.packetList[i];
         }
 
         return null;
@@ -107,15 +109,20 @@ export default class PacketManager {
         if ( !packet )
             throw new Error(`could not find packet id: ${id}`);
         
-        if ( true ) { // debug === true
-            console.log("Handling packet: ", packet.name || 'Unknown', id);
-        }
+        if ( true ) // debug === true
+            console.log("Handling packet: ", packet.packetEvent.name || 'Unknown', id);
 
-        packet.Parse(serverMessage);        
+        packet.packetEvent.Parse(serverMessage);
+        if ( packet.callback )
+            packet.callback(packet.packetEvent);
     }
 
     
-    registerPacket(id: number, packetEvent: IPacketEvent): void {
-        this.packetList.push({id: id, packetEvent: packetEvent});
+    registerPacket(packetEvent: IPacketEvent, callback?: PacketCallback): void {
+        this.packetList.push({
+            id: packetEvent.packetId, 
+            packetEvent: packetEvent, 
+            callback: callback
+        });
     }
 }

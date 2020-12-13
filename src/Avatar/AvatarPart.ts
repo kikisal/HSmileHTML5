@@ -3,7 +3,7 @@ import { HSmile } from '../HSmileMain';
 
 import Vector from '../Math/Vector';
 import { ImageResource } from '../Resource/ResourceManagerImage';
-import { Map } from '../HSmile/Room/RoomEngine/Map';
+import { Map } from '../HSmile/Room/Map';
 import { AnimationStates, AvatarParts, AvatarRotations } from "./AvatarTypes";
 import { HS_HUMAN_BODY, H } from './GlobalTexts';
 import IAvatarPart from "./IAvatarPart";

@@ -1,8 +1,10 @@
 import IServerMessage from "../../../Messages/IServerMessage";
+import Incoming from "../../Events/Incoming";
 import IPacketEvent from "../IPacketEvent";
 
 export default class SoundSettingsMessageEvent implements IPacketEvent {
     name = 'SoundSettingsMessageEvent';
+    packetId = Incoming.SoundSettingsMessageComposer;
 
     Parse(serverPacket: IServerMessage): void {
         const clientVolumes = serverPacket.popInt();

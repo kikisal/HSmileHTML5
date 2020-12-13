@@ -1,6 +1,6 @@
 import { Container } from "pixi.js";
-import { Map } from "./RoomEngine/Map";
-import RoomModel from "./RoomEngine/RoomModel";
+import { Map } from "./Map";
+import RoomModel from "./RoomModel";
 import * as PIXI from 'pixi.js';
 import { HSmile } from "../../HSmileMain";
 import AvatarComposer from "../../Avatar/AvatarComposer";
@@ -24,16 +24,16 @@ export class Room {
         const app = HSmile.get().app!;
 
         this.avatarComposer = new AvatarComposer(this.map.mapStage);
-
+        
         this.avatarComposer.position.x = 0;
         this.avatarComposer.position.y = 0;
-        
-
     }
 
     update(): void {
         this.avatarComposer!.update();
         this.map.update();
+        
+
     }
     
     draw(): void {

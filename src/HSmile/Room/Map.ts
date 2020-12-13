@@ -1,10 +1,10 @@
 import * as PIXI from 'pixi.js';
-import { HSmile } from '../../../HSmileMain';
-import Vector from '../../../Math/Vector';
-import RoomGraphics from './../RoomGraphics/RoomGraphics';
-import { Room } from '../Room';
+import { HSmile } from '../../HSmileMain';
+import Vector from '../../Math/Vector';
+import RoomGraphics from './RoomGraphics';
+import { Room } from './Room';
 import INDEX_ORDERS from './IndexOrders';
-import Transform from '../../../Math/Transform';
+import Transform from '../../Math/Transform';
 
 export class Map {
 
@@ -32,8 +32,8 @@ export class Map {
 
         const app = HSmile.get().app!;
 
-        this.room.root_stage.position.x = window.innerWidth / 2;
-        this.room.root_stage.position.y = Math.floor(965/2);
+        this.room.root_stage.position.x = Math.floor(window.innerWidth / 2);
+        this.room.root_stage.position.y = Math.floor(window.innerHeight / 2)
 
         this.mapStage = new PIXI.Container();
         this.mapStage.sortableChildren = true;

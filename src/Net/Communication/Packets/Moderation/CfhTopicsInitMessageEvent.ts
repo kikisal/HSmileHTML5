@@ -1,8 +1,11 @@
 import IServerMessage from "../../../Messages/IServerMessage";
+import Incoming from "../../Events/Incoming";
 import IPacketEvent from "../IPacketEvent";
 
 export default class CfhTopicsInitMessageEvent implements IPacketEvent {
     name = 'CfhTopicsInitMessageEvent';
+    packetId = Incoming.CfhTopicsInitMessageComposer;
+
     Parse(serverPacket: IServerMessage): void {
 
         /*

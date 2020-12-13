@@ -1,11 +1,13 @@
 import { HSmile } from "../../../../HSmileMain";
 import ClientMessage from "../../../Messages/ClientMessage";
 import IServerMessage from "../../../Messages/IServerMessage";
+import Incoming from "../../Events/Incoming";
 import Outcoming from "../../Events/Outcoming";
 import IPacketEvent from "../IPacketEvent";
 
 export default class NavigatorSettingsMessageEvent implements IPacketEvent {
     name = 'NavigatorSettingsMessageEvent';
+    packetId = Incoming.NavigatorSettingsMessageComposer;
     
     Parse(serverPacket: IServerMessage): void {
        
