@@ -1,10 +1,12 @@
+import Component from "../../Core/Runtime/Component";
+import IContext from "../../Core/Runtime/IContext";
 import { HSmile } from "../../HSmileMain";
 import IPacketEvent from "../../Net/Communication/Packets/IPacketEvent";
 import SoundSettingsMessageEvent from "../../Net/Communication/Packets/Sound/SoundSettingsMessageEvent";
 
-export default class HSmileSoundManager {
-    constructor() {
-
+export default class HSmileSoundManager extends Component {
+    constructor(context: IContext) {
+        super(context);
         this.initEvents();
     }
 

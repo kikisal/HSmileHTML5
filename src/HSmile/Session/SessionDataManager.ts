@@ -1,10 +1,15 @@
+import Component from "../../Core/Runtime/Component";
+import IContext from "../../Core/Runtime/IContext";
+import IUpdateReceiver from "../../Core/Runtime/IUpdateReceiver";
 import { HSmile } from "../../HSmileMain";
 import IPacketEvent from "../../Net/Communication/Packets/IPacketEvent";
 import SoundSettingsMessageEvent from "../../Net/Communication/Packets/Sound/SoundSettingsMessageEvent";
 import NuxAlertMessageEvent from "../../Net/Communication/Packets/Users/NuxAlertMessageEvent";
 
-export default class SessionDataManager {
-    constructor() {
+export default class SessionDataManager extends Component {
+    constructor(context: IContext) {
+        super(context);
+ 
 
         this.initEvents();
     }

@@ -11,6 +11,7 @@ import ResourceParser from './Resource/parser/ResourceParser';
 import ResourceManagerImage, { ImageResource } from './Resource/ResourceManagerImage';
 import { Room } from './HSmile/Room/Room';
 import RoomModel from './HSmile/Room/RoomModel';
+import GameContext from './GameContext';
 
 type MousePosition = {
     x?: number;
@@ -82,6 +83,7 @@ export class HSmile {
 
 
         // init packets
+        this.game.setContext(new GameContext(app.stage));
         this.game.init();
         
         // try to establish a connection
