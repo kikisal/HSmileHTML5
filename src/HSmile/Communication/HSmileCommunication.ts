@@ -3,7 +3,7 @@ import HSmileCommunicationHandler from "./HSmileCommunicationHandler";
 
 export default class HSmileCommunication {
 
-    hsmileCommunicationHandler?: HSmileCommunicationHandler;
+    hsmileCommunicationHandler: HSmileCommunicationHandler;
 
     constructor() {
         const hsmile = HSmile.get();

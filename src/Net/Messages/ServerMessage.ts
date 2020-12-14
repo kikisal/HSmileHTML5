@@ -22,6 +22,15 @@ export default class ServerMessage implements IServerMessage {
         this.packetId = this.popShort();
 
     }
+    clone(): IServerMessage {
+        const arrayBuffer = new ArrayBuffer(this.data.byteLength);
+        const dataView = new DataView(arrayBuffer);
+        for ( let i = 0; i < this.data.byteLength; ++i )
+            dataView.setInt8(i * Int8Array.BYTES_PER_ELEMENT, this.dataView.getInt8(i * Int8Array.BYTES_PER_ELEMENT));
+
+        const serverMessage = new ServerMessage(arrayBuffer);
+        return serverMessage;
+    }
 
 
     popInt(): number {

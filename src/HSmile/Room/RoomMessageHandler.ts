@@ -16,10 +16,10 @@ export default class RoomMessageHandler {
     }
 
     initEvents(): void {
-        this.packetManager.addMessageEvent(new OpenConnectionMessageEvent(), this.onOpenConnectionMessage);
-        this.packetManager.addMessageEvent(new CloseConnectionMessageEvent(), this.onCloseMessageEvent);
-        this.packetManager.addMessageEvent(new RoomReadyMessageEvent(), this.onRoomReadyMessageEvent);
-        this.packetManager.addMessageEvent(new RoomPropertyMessageEvent(), this.onRoomProperty);
+        this.packetManager.addMessageEvent(new OpenConnectionMessageEvent(), this.onOpenConnectionMessage.bind(this));
+        this.packetManager.addMessageEvent(new CloseConnectionMessageEvent(), this.onCloseMessageEvent.bind(this));
+        this.packetManager.addMessageEvent(new RoomReadyMessageEvent(), this.onRoomReadyMessageEvent.bind(this));
+        this.packetManager.addMessageEvent(new RoomPropertyMessageEvent(), this.onRoomProperty.bind(this));
     }
     
     onRoomProperty(e: IPacketEvent): void {

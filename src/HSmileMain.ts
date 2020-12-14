@@ -34,9 +34,6 @@ export class HSmile {
     socketManager: SocketManager;
     game: Game;
 
-
-
-
     constructor() {
         this.resourceImageManager = new ResourceManagerImage(new ImageJsonParser());
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
@@ -84,7 +81,10 @@ export class HSmile {
         // ora stabilisci connessione con emu... 
 
 
+        // init packets
+        this.game.init();
         
+        // try to establish a connection
         this.socketManager.init();
         
 

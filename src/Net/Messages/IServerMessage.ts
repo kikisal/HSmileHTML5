@@ -1,4 +1,9 @@
 export default interface IServerMessage {
+
+    /**
+     * @returns a clone of IServerMessage instance.
+     */
+    clone(): IServerMessage;
     
     /**
      * @returns number 32 bit

@@ -16,10 +16,10 @@ export default class HSmileCommunicationHandler {
     }
 
     initPackets(): void {
-        this.packetManager.addMessageEvent(new AuthenticationOKMessageEvent(), this.onAuthenticationOKMessageEvent);
-        this.packetManager.addMessageEvent(new PongMessage(), this.onPongMessageEvent);
-        this.packetManager.addMessageEvent(new UserRightsMessageEvent(), this.onUserRightsMessageEvent);
-        this.packetManager.addMessageEvent(new AvailabilityStatusMessageEvent(), this.onAvailabilityStatusMessageEvent);
+        this.packetManager.addMessageEvent(new AuthenticationOKMessageEvent(), this.onAuthenticationOKMessageEvent.bind(this));
+        this.packetManager.addMessageEvent(new PongMessage(), this.onPongMessageEvent.bind(this));
+        this.packetManager.addMessageEvent(new UserRightsMessageEvent(), this.onUserRightsMessageEvent.bind(this));
+        this.packetManager.addMessageEvent(new AvailabilityStatusMessageEvent(), this.onAvailabilityStatusMessageEvent.bind(this));
     }
 
     onAvailabilityStatusMessageEvent(e: IPacketEvent): void {
