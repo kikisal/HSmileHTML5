@@ -15,5 +15,6 @@ export default class RoomReadyMessageEvent implements IPacketEvent {
 
         this.roomType = roomType;
         this.roomId = roomId;
+
     }
 }

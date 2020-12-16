@@ -12,7 +12,10 @@
       "DOM.Iterable",
       "ES2015.Symbol",
       "ES2017.TypedArrays",
-      "ES5"],                             /* Specify library files to be included in the compilation. */
+      "ES5",
+      "ES2019.Array",
+      "ES2016.Array.Include",
+      "ES2015"],                             /* Specify library files to be included in the compilation. */
     // "allowJs": true,                       /* Allow javascript files to be compiled. */
     // "checkJs": true,                       /* Report errors in .js files. */
     // "jsx": "preserve",                     /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
