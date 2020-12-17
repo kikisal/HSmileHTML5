@@ -190,11 +190,7 @@ export class HSmile {
             // handle error webgl.
             throw ex;
         }
-        
-
-    }
-
-                
+    }          
 }
 
 (<any>window).HSmile = (<any>window).HSmile || HSmile;
