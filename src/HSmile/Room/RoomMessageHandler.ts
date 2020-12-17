@@ -41,17 +41,13 @@ export default class RoomMessageHandler {
 
     onFloorHeightMapMessageEvent(e: IPacketEvent): void {
         const parser = e as FloorHeightMapMessageEvent;
-
         
+
+
     }
 
     onHeightMap(e: IPacketEvent): void {
         const parser = e as HeightMapMessageEvent;
-
-        const width = parser.width;
-        const height = parser.height;
-        const data = parser.data;
-
 
     }
 

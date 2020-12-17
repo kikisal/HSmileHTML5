@@ -37,7 +37,31 @@ export default class FloorHeightMapMessageEvent implements IPacketEvent {
         for ( let i = 0; i < this.height; ++i )
             this.heightMap.push(Array.from(new Array(rawHeightMap[i].length), () => RoomPlaneParser.TILE_BLOCKED))
 
-        
-        console.log(this.heightMap);
+        for ( let i = 0; i < this.height; ++i ) {
+            const row = this.heightMap[i];
+            const rawRow = rawHeightMap[i];
+            if ( rawRow.length > 0 ) {
+                for ( let j = 0; j < rawRow.length; ++j ) {
+                    const planeHeight = rawRow[j];
+
+                    if ( planeHeight.toLocaleLowerCase() === 'x' )
+                        row[j] = RoomPlaneParser.TILE_BLOCKED;
+                    else
+                        row[j] = parseInt(planeHeight, 36);
+                }
+            }
+        }
+
+
+        this.scale = scale ? 32 : 64;
+    }
+
+    
+    getSqHeight(x: number, y: number): number
+    {
+        if ( x < 0 || x >= this.width || y < 0 || y >= this.height )
+            return RoomPlaneParser.TILE_BLOCKED;
+
+        return this.heightMap[y][x];
     }
 }
