@@ -1,4 +1,3 @@
-import { Prepare } from "pixi.js";
 import Vector from "../Math/Vector";
 import { AnimationStates, AvatarParts, AvatarRotations } from "./AvatarTypes";
 

@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi.js';
 import IContext from "./Core/Runtime/IContext";
 import IUpdateReceiver from "./Core/Runtime/IUpdateReceiver";
 

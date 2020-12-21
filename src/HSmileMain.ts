@@ -12,6 +12,55 @@ import ResourceManagerImage, { ImageResource } from './Resource/ResourceManagerI
 import { Room } from './HSmile/Room/Room';
 import RoomModel from './HSmile/Room/RoomModel';
 import GameContext from './GameContext';
+import WebGLContext from './Core/Graphics/WebGLContext';
+
+function isWebGLSupported(): boolean {
+    const contextOptions = {
+        stencil: true,
+        failIfMajorPerformanceCaveat: false,
+    };
+
+    try
+    {
+        if (!window.WebGLRenderingContext)
+        {
+            console.log('No WebGLRenderingContext');
+            return false;
+        }
+
+        const canvas = document.createElement('canvas');
+        let gl = canvas.getContext('webgl', contextOptions)
+            || canvas.getContext('experimental-webgl', contextOptions);
+
+        const success = !!(gl && (<any>gl).getContextAttributes().stencil);
+
+        if (gl)
+        {
+            const loseContext = (<any>gl).getExtension('WEBGL_lose_context');
+
+            if (loseContext)
+            {
+                loseContext.loseContext();
+            }
+        }
+
+        gl = null;
+
+        return success;
+    }
+    catch (e)
+    {
+        console.log(e.message);
+        return false;
+    }
+}
+
+PIXI.Renderer.create = function create(options: PIXI.IRenderOptions | undefined) {
+    if ( isWebGLSupported() )
+        return new PIXI.Renderer(options);
+
+    throw new Error;
+}
 
 type MousePosition = {
     x?: number;
@@ -24,11 +73,14 @@ export class HSmile {
     // from a client call ran into a browser.
 
     app: PIXI.Application | undefined;
+    rootElementTag?: HTMLElement;
 
     keys: object = {};
     static mouse: MousePosition = {down: false};
     
     private static instance: HSmile | undefined;
+
+    webglContext?: WebGLContext;
 
 
     resourceImageManager: ResourceManagerImage<HTMLImageElement>;
@@ -36,16 +88,20 @@ export class HSmile {
     game: Game;
 
     constructor() {
+        
         this.resourceImageManager = new ResourceManagerImage(new ImageJsonParser());
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
         PIXI.settings.ROUND_PIXELS = false;
 
         window.addEventListener('resize', this.resize.bind(this));
 
+
         this.socketManager = new SocketManager("ws://localhost:30000/");
         this.game = new Game();
         this.socketManager.setCallBack(new ConnectionHandler());
     }
+
+
 
     resize() {
         const app = this.app!;
@@ -81,6 +137,10 @@ export class HSmile {
         // HSMile risorse hs_human_body + suoni caricate
         // ora stabilisci connessione con emu... 
 
+        if ( !this.rootElementTag )
+            throw new Error('root element tag null.');
+
+        this.webglContext = new WebGLContext(this.rootElementTag);
 
         // init packets
         this.game.setContext(new GameContext(app.stage));
@@ -89,7 +149,6 @@ export class HSmile {
         // try to establish a connection
         this.socketManager.init();
         
-
         // ...
         // ... emu connections, start receiveing events from it
 
@@ -98,8 +157,10 @@ export class HSmile {
 
         
         // game loop
-        app.ticker.add(this.gameLoop.bind(this));
+        // app.ti.add(this.gameLoop.bind(this));
+        PIXI.Ticker.system.add(this.gameLoop.bind(this));
 
+        
     }   
 
     onProgressResourceLoader(e: any): void {
@@ -155,6 +216,10 @@ export class HSmile {
         this.app = app;
     }
 
+    setRootTagElement(tag: HTMLElement): void {
+        this.rootElementTag = tag;
+    }
+
     static HSmileMain(init_tag: any ): never | HSmile | void {
         if ( !init_tag )
             throw `tag main cannot be nor null neither undefined.`;
@@ -177,10 +242,11 @@ export class HSmile {
                 }
             );    
 
-            viewOut.appendChild(app.view);
+            // viewOut.appendChild(app.view);
             
             const hsmile = HSmile.get();
 
+            hsmile.setRootTagElement(viewOut);
             hsmile.setApp(app);
             hsmile.init();
 

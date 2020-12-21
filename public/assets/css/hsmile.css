@@ -7,6 +7,7 @@ body {
     padding: 0;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: -moz-crisp-edges;
+    background: #000000;
 }
 
 canvas {
@@ -16,6 +17,7 @@ canvas {
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    border: 1px solid #fff;
 }
 
 .splash-screen {
