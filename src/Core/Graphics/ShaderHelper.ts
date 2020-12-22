@@ -25,7 +25,6 @@ export default class ShaderHelper {
     }
 
     set(key: number, source: IShaderSource): void {
-
         if ( this.contains(key) )
             this.remove(key);
 
@@ -36,7 +35,6 @@ export default class ShaderHelper {
     }
 
     get(key: number): WebGLShader | null {
-  
         return !this.shaders[key] ? null : this.shaders[key]!.shader;
     }
 
