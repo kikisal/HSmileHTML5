@@ -10,6 +10,8 @@
   "author": "KiKiSal",
   "license": "ISC",
   "dependencies": {
+    "@types/mathjs": "^6.0.9",
+    "mathjs": "^8.1.0",
     "pixi.js": "^5.4.0-rc.3"
   }
 }

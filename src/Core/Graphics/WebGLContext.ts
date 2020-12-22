@@ -1,4 +1,12 @@
-export default class WebGLContext {
+import * as math from 'mathjs';
+import IWebGLContext from './IWebGLContext';
+import ProgramHelper from './ProgramHelper';
+import ProgramSource from './ProgramSource';
+import DefaultVertexShader from './shaders/DefaultVertexShader';
+import DefaultFragmentShader from './shaders/DefaultFragmentShader';
+
+
+export default class WebGLContext implements IWebGLContext {
 
 
     static readonly DEFAULT_BUFFER_WIDTH_SIZE = 1280;
@@ -14,6 +22,8 @@ export default class WebGLContext {
     }
 
     demo(): void {
+        const programHelper = new ProgramHelper(this);
+        programHelper.createProgram('default', new ProgramSource(new DefaultVertexShader(), new DefaultFragmentShader()));
         
     }
 
