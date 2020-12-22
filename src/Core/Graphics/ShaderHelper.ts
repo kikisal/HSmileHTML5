@@ -79,7 +79,7 @@ export default class ShaderHelper {
             if ( !shaderCompiled )
             {
                 this.remove(idShader);
-                throw new Error(`cannot compiled shader: ${shaderLabel}`);
+                throw new Error(`cannot compile shader: ${shaderLabel}`);
             }
 
             this.shaders[idShader]!.shader = webGlShader;
