@@ -2,6 +2,8 @@ import IWebGLContext from "./IWebGLContext";
 import Program from "./Program";
 import ProgramSource from "./ProgramSource";
 import ShaderHelper from "./ShaderHelper";
+import DefaultFragmentShader from "./shaders/DefaultFragmentShader";
+import DefaultVertexShader from "./shaders/DefaultVertexShader";
 
 type ProgramType = {
     [name: string]: Program | null;
@@ -15,10 +17,33 @@ export default class ProgramHelper {
 
     constructor(ctx: IWebGLContext) {
         this.context = ctx;
+        this.createProgram('default', new ProgramSource(new DefaultVertexShader(), new DefaultFragmentShader()));
+        this.use('default');
+    }
+
+    use( name: string ): void {
+
+        const gl = this.context.context;
+
+        if ( !gl )
+            throw new Error('use() ProgramHelper: no webgl context found.');
+
+        if ( !this.contains(name) ) {
+            if ( true ) // debug true
+                console.warn(`no program called '${name}' has been found; setting default one.`);
+
+            gl.useProgram( this.programs['default']!.program );
+            return;
+        }
+
+        if ( name === 'default' && true /* debug true */ )
+            console.warn('[ProgramHelper] use(): no program specified, using default one.');
+
+        gl.useProgram(this.programs[name]!.program);        
     }
 
     contains(name: string): boolean {
-        return name in this.programs;
+        return name in this.programs && this.programs[name]!.program !== null;
     }
 
     /**
@@ -27,19 +52,34 @@ export default class ProgramHelper {
      */
     remove(name: string): void {
         const program = this.programs[name];
-        if ( !program )
+        if ( !program || !program.program )
             return;
 
         const gl = this.context.context;
         if ( !gl )
             return;
 
-        gl.deleteProgram(program);
+        gl.deleteProgram(program.program);
         this.programs[name] = null;
     }
+    
+
+    size(): number {
+        let size = 0;
+        for ( let program in this.programs ) {
+            if ( this.programs[program] && this.programs[program]!.program )
+                size++;
+        }
+
+        return size;
+    }
+
 
     createProgram(name: string, source: ProgramSource): void {
 
+
+        if ( this.contains(name) )
+            this.remove(name); // destroy current program.
 
         const gl = this.context.context;
         if ( !gl )
@@ -79,9 +119,6 @@ export default class ProgramHelper {
             gl.deleteProgram(program);
             throw new Error(`could not link program: ${name}`);
         }
-
-        if ( this.contains(name) )
-            this.remove(name); // destroy current program.
 
 
         this.programs[name] = new Program(program, source);

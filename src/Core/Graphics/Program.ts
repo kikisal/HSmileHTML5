@@ -9,8 +9,4 @@ export default class Program {
         this.program = program;
         this.source = source;
     }
-
-    compile(): void {
-        
-    }
 }

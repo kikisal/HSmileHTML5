@@ -23,8 +23,9 @@ export default class WebGLContext implements IWebGLContext {
 
     demo(): void {
         const programHelper = new ProgramHelper(this);
-        programHelper.createProgram('default', new ProgramSource(new DefaultVertexShader(), new DefaultFragmentShader()));
-        
+
+        console.log(`total programs: ${programHelper.size()}`);
+
     }
 
     resize(): void {
